@@ -1,0 +1,1169 @@
+{% block title %}Eco Dashboard | SustainTrack{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    :root {
+        --eco-primary: #2e8b57;
+        --eco-primary-light: #3aafa9;
+        --eco-secondary: #8fd3c7;
+        --eco-dark: #1a2e35;
+        --eco-light: #f8fafc;
+        --eco-gray: #94a3b8;
+        --eco-light-gray: #e2e8f0;
+        --eco-gradient: linear-gradient(135deg, var(--eco-primary), var(--eco-primary-light));
+        --eco-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --eco-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --eco-shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+        --eco-radius-sm: 8px;
+        --eco-radius-md: 12px;
+        --eco-radius-lg: 16px;
+    }
+    
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #f5f7fa;
+        color: var(--eco-dark);
+        line-height: 1.6;
+    }
+    
+    .eco-dashboard {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 0 1rem 3rem;
+    }
+    
+    /* Header */
+    .dashboard-header {
+        background: linear-gradient(rgba(255,255,255,0.96), rgba(242,250,247,0.96)), 
+                    url('https://images.unsplash.com/photo-1466611653911-95081537e5b7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover no-repeat;
+        padding: 5rem 0;
+        margin: 0 -1rem 3rem;
+        border-radius: 0 0 var(--eco-radius-lg) var(--eco-radius-lg);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .dashboard-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--eco-gradient);
+        opacity: 0.05;
+        z-index: 0;
+    }
+    
+    .dashboard-header .container {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .dashboard-title {
+        font-size: 2.75rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+        background: var(--eco-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        display: inline-block;
+    }
+    
+    .dashboard-subtitle {
+        font-size: 1.25rem;
+        color: var(--eco-gray);
+        max-width: 700px;
+        margin: 0 auto 2rem;
+        font-weight: 400;
+    }
+    
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: var(--eco-radius-md);
+        box-shadow: var(--eco-shadow-sm);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        position: relative;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: var(--eco-gradient);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--eco-shadow-lg);
+    }
+    
+    .stat-card.carbon::before {
+        background: #ef4444;
+    }
+    
+    .stat-card.water::before {
+        background: #0ea5e9;
+    }
+    
+    .stat-card.waste::before {
+        background: #16a34a;
+    }
+    
+    .stat-card-body {
+        padding: 2rem;
+    }
+    
+    .stat-icon-container {
+        width: 70px;
+        height: 70px;
+        border-radius: var(--eco-radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+    
+    .stat-card.carbon .stat-icon-container {
+        background-color: rgba(239, 68, 68, 0.1);
+    }
+    
+    .stat-card.water .stat-icon-container {
+        background-color: rgba(14, 165, 233, 0.1);
+    }
+    
+    .stat-card.waste .stat-icon-container {
+        background-color: rgba(22, 163, 74, 0.1);
+    }
+    
+    .stat-icon {
+        font-size: 2rem;
+    }
+    
+    .stat-card.carbon .stat-icon {
+        color: #ef4444;
+    }
+    
+    .stat-card.water .stat-icon {
+        color: #0ea5e9;
+    }
+    
+    .stat-card.waste .stat-icon {
+        color: #16a34a;
+    }
+    
+    .stat-value {
+        font-weight: 800;
+        font-size: 2.5rem;
+        line-height: 1.2;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+    
+    .stat-card.carbon .stat-value {
+        color: #ef4444;
+    }
+    
+    .stat-card.water .stat-value {
+        color: #0ea5e9;
+    }
+    
+    .stat-card.waste .stat-value {
+        color: #16a34a;
+    }
+    
+    .stat-title {
+        font-weight: 600;
+        color: var(--eco-dark);
+        margin-bottom: 1rem;
+        text-align: center;
+        font-size: 1.25rem;
+    }
+    
+    .stat-meta {
+        color: var(--eco-gray);
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    
+    .progress-container {
+        margin-top: 1.5rem;
+    }
+    
+    .progress {
+        height: 8px;
+        border-radius: 4px;
+        background-color: var(--eco-light-gray);
+        overflow: hidden;
+    }
+    
+    .progress-bar {
+        border-radius: 4px;
+    }
+    
+    .stat-card.carbon .progress-bar {
+        background-color: #ef4444;
+    }
+    
+    .stat-card.water .progress-bar {
+        background-color: #0ea5e9;
+    }
+    
+    .stat-card.waste .progress-bar {
+        background-color: #16a34a;
+    }
+    
+    .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--eco-gray);
+    }
+    
+    .goal-completion {
+        display: flex;
+        align-items: center;
+        margin-top: 1.5rem;
+        background-color: rgba(255,255,255,0.7);
+        padding: 0.75rem;
+        border-radius: var(--eco-radius-sm);
+    }
+    
+    .goal-completion-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    
+    .stat-card.carbon .goal-completion-icon {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+    
+    .stat-card.water .goal-completion-icon {
+        background-color: rgba(14, 165, 233, 0.1);
+        color: #0ea5e9;
+    }
+    
+    .stat-card.waste .goal-completion-icon {
+        background-color: rgba(22, 163, 74, 0.1);
+        color: #16a34a;
+    }
+    
+    .goal-completion-text {
+        font-size: 0.95rem;
+        color: var(--eco-gray);
+    }
+    
+    .goal-completion-text strong {
+        color: var(--eco-dark);
+    }
+    
+    /* Impact Graph Card */
+    .impact-graph-card {
+        background: white;
+        border-radius: var(--eco-radius-md);
+        box-shadow: var(--eco-shadow-sm);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .section-title {
+        font-weight: 700;
+        color: var(--eco-dark);
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 50px;
+        height: 4px;
+        background: var(--eco-gradient);
+        border-radius: 2px;
+    }
+    
+    .impact-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--eco-light-gray);
+        margin-bottom: 1.5rem;
+    }
+    
+    .impact-tab {
+        padding: 0.75rem 1.5rem;
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--eco-gray);
+        border-bottom: 3px solid transparent;
+        transition: all 0.2s ease;
+    }
+    
+    .impact-tab.active {
+        color: var(--eco-primary);
+        border-bottom-color: var(--eco-primary);
+    }
+    
+    .impact-tab:hover:not(.active) {
+        color: var(--eco-dark);
+    }
+    
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+    
+    /* Comparison Badge */
+    .comparison-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    
+    .comparison-badge.up {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+    
+    .comparison-badge.down {
+        background-color: rgba(22, 163, 74, 0.1);
+        color: #16a34a;
+    }
+    
+    .comparison-badge i {
+        margin-right: 0.25rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Activity Card */
+    .activity-card {
+        border-radius: var(--eco-radius-md);
+        box-shadow: var(--eco-shadow-sm);
+        overflow: hidden;
+        background: white;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .activity-card-header {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--eco-light-gray);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .activity-card-title {
+        font-weight: 700;
+        color: var(--eco-dark);
+        margin: 0;
+        font-size: 1.375rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .activity-card-title i {
+        margin-right: 0.75rem;
+        color: var(--eco-primary);
+    }
+    
+    .activity-item {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--eco-light-gray);
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-item:hover {
+        background-color: rgba(46, 139, 87, 0.03);
+    }
+    
+    .activity-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--eco-radius-sm);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1.25rem;
+        flex-shrink: 0;
+        font-size: 1.25rem;
+        color: white;
+    }
+    
+    .activity-item:nth-child(1) .activity-icon {
+        background-color: #ef4444;
+    }
+    
+    .activity-item:nth-child(2) .activity-icon {
+        background-color: #0ea5e9;
+    }
+    
+    .activity-item:nth-child(3) .activity-icon {
+        background-color: #eab308;
+    }
+    
+    .activity-item:nth-child(4) .activity-icon {
+        background-color: #16a34a;
+    }
+    
+    .activity-content {
+        flex: 1;
+    }
+    
+    .activity-title {
+        font-weight: 600;
+        color: var(--eco-dark);
+        margin-bottom: 0.25rem;
+        font-size: 1.1rem;
+    }
+    
+    .activity-time {
+        color: var(--eco-gray);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .activity-time i {
+        margin-right: 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .activity-points {
+        background-color: rgba(46, 139, 87, 0.1);
+        color: var(--eco-primary);
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    
+    /* Buttons */
+    .eco-btn-primary {
+        background: var(--eco-gradient);
+        border: none;
+        border-radius: var(--eco-radius-sm);
+        padding: 1rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        box-shadow: var(--eco-shadow-sm);
+        text-decoration: none;
+    }
+    
+    .eco-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--eco-shadow-md);
+        color: white;
+    }
+    
+    .eco-btn-primary i {
+        margin-right: 0.5rem;
+    }
+    
+    .btn-outline-secondary {
+        border: 1px solid var(--eco-gray);
+        background: transparent;
+        color: var(--eco-gray);
+        border-radius: var(--eco-radius-sm);
+        padding: 1rem 2rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: rgba(148, 163, 184, 0.05);
+        color: var(--eco-dark);
+    }
+    
+    .btn-outline-secondary i {
+        margin-right: 0.5rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .dashboard-header {
+            padding: 3rem 0;
+        }
+        
+        .dashboard-title {
+            font-size: 2rem;
+        }
+        
+        .dashboard-subtitle {
+            font-size: 1.1rem;
+        }
+        
+        .stat-card-body {
+            padding: 1.75rem 1.5rem;
+        }
+        
+        .activity-item {
+            padding: 1.25rem 1.5rem;
+        }
+        
+        .chart-container {
+            height: 250px;
+        }
+        
+        .impact-tab {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="eco-dashboard">
+    <!-- Header with Hero Background -->
+    <div class="dashboard-header">
+        <div class="container">
+            <h1 class="dashboard-title">Your Sustainability Dashboard</h1>
+            <p class="dashboard-subtitle">Track your environmental impact and see how small changes make a big difference for our planet</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Stats Grid -->
+        <div class="stats-grid mb-5">
+            <!-- CO2 Card -->
+            <div class="stat-card carbon">
+                <div class="stat-card-body">
+                    <div class="stat-icon-container">
+                        <i class="fas fa-cloud stat-icon"></i>
+                    </div>
+                    <h3 class="stat-title">Carbon Saved</h3>
+                    <h2 class="stat-value">10.0 kg</h2>
+                    <p class="stat-meta">Equivalent to planting 5 trees</p>
+                    <div class="progress-container">
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 72%"></div>
+                        </div>
+                        <div class="progress-label">
+                            <span>Monthly Goal</span>
+                            <span>72%</span>
+                        </div>
+                    </div>
+                    <div class="goal-completion">
+                        <div class="goal-completion-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="goal-completion-text">
+                            <strong>+12%</strong> better than last month
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Water Card -->
+            <div class="stat-card water">
+                <div class="stat-card-body">
+                    <div class="stat-icon-container">
+                        <i class="fas fa-tint stat-icon"></i>
+                    </div>
+                    <h3 class="stat-title">Water Conserved</h3>
+                    <h2 class="stat-value">20.0 L</h2>
+                    <p class="stat-meta">Enough for 100 glasses of water</p>
+                    <div class="progress-container">
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 65%"></div>
+                        </div>
+                        <div class="progress-label">
+                            <span>Monthly Goal</span>
+                            <span>65%</span>
+                        </div>
+                    </div>
+                    <div class="goal-completion">
+                        <div class="goal-completion-icon">
+                            <i class="fas fa-tint"></i>
+                        </div>
+                        <div class="goal-completion-text">
+                            <strong>+8%</strong> better than last month
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Waste Card -->
+            <div class="stat-card waste">
+                <div class="stat-card-body">
+                    <div class="stat-icon-container">
+                        <i class="fas fa-recycle stat-icon"></i>
+                    </div>
+                    <h3 class="stat-title">Waste Diverted</h3>
+                    <h2 class="stat-value">5.0 kg</h2>
+                    <p class="stat-meta">Kept out of landfills</p>
+                    <div class="progress-container">
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 85%"></div>
+                        </div>
+                        <div class="progress-label">
+                            <span>Monthly Goal</span>
+                            <span>85%</span>
+                        </div>
+                    </div>
+                    <div class="goal-completion">
+                        <div class="goal-completion-icon">
+                            <i class="fas fa-recycle"></i>
+                        </div>
+                        <div class="goal-completion-text">
+                            <strong>+15%</strong> better than last month
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Impact Graphs Section -->
+        <div class="impact-graph-card">
+            <h3 class="section-title">Your Environmental Impact Over Time</h3>
+            
+            <div class="impact-tabs">
+                <div class="impact-tab active" data-period="week">This Week</div>
+                <div class="impact-tab" data-period="month">This Month</div>
+                <div class="impact-tab" data-period="year">This Year</div>
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="impactTrendChart"></canvas>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex items-center">
+                    <div class="stat-icon-container" style="width: 50px; height: 50px; background-color: rgba(239, 68, 68, 0.1); margin-right: 1rem;">
+                        <i class="fas fa-cloud" style="color: #ef4444;"></i>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold mb-1">Carbon Footprint</h5>
+                        <p class="text-sm text-gray-500">2.1 kg CO2 saved today <span class="comparison-badge down"><i class="fas fa-arrow-down"></i> 12%</span></p>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex items-center">
+                    <div class="stat-icon-container" style="width: 50px; height: 50px; background-color: rgba(14, 165, 233, 0.1); margin-right: 1rem;">
+                        <i class="fas fa-tint" style="color: #0ea5e9;"></i>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold mb-1">Water Usage</h5>
+                        <p class="text-sm text-gray-500">5.3 liters saved today <span class="comparison-badge down"><i class="fas fa-arrow-down"></i> 8%</span></p>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex items-center">
+                    <div class="stat-icon-container" style="width: 50px; height: 50px; background-color: rgba(22, 163, 74, 0.1); margin-right: 1rem;">
+                        <i class="fas fa-recycle" style="color: #16a34a;"></i>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold mb-1">Waste Reduction</h5>
+                        <p class="text-sm text-gray-500">1.2 kg recycled today <span class="comparison-badge up"><i class="fas fa-arrow-up"></i> 15%</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Comparison Graph -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+            <div class="lg:col-span-2">
+                <div class="impact-graph-card h-full">
+                    <h3 class="section-title">Impact Comparison</h3>
+                    <p class="text-gray-500 mb-4">See how your efforts compare to others in your area</p>
+                    <div class="chart-container">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="impact-graph-card h-full">
+                    <h3 class="section-title">Eco Score</h3>
+                    <div class="text-center my-4">
+                        <div class="relative inline-block">
+                            <div class="chart-container" style="width: 200px; height: 200px;">
+                                <canvas id="ecoScoreChart"></canvas>
+                            </div>
+                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+                                <h2 class="text-3xl font-bold mb-0">82</h2>
+                                <small class="text-gray-500">out of 100</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-gray-500">You're doing better than <strong class="text-green-600">75%</strong> of users in your area!</p>
+                        <div class="progress mt-2" style="height: 8px; border-radius: 4px;">
+                            <div class="progress-bar" style="width: 75%; background: var(--eco-gradient);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CTA Section -->
+        <div class="text-center my-8 py-4">
+            <h3 class="section-title mb-4">Ready to make an impact?</h3>
+            <div class="flex justify-center gap-4">
+                <a href="{% url 'product_listing' %}" class="eco-btn-primary">
+                    <i class="fas fa-plus-circle"></i> Track a New Action
+                </a>
+                <a href="#" class="btn-outline-secondary">
+                    <i class="fas fa-bullseye"></i> Set New Goals
+                </a>
+            </div>
+        </div>
+        
+        <!-- Activity Feed -->
+        <div class="activity-card mt-6">
+            <div class="activity-card-header">
+                <h4 class="activity-card-title">
+                    <i class="fas fa-history"></i> Your Recent Eco Activities
+                </h4>
+                <a href="#" class="text-sm font-medium text-green-600 hover:text-green-700">View All</a>
+            </div>
+            <div class="divide-y divide-gray-100">
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-recycle"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h6 class="activity-title">Recycled 2kg of paper products</h6>
+                        <small class="activity-time">
+                            <i class="far fa-clock"></i> Today at 10:42 AM
+                        </small>
+                    </div>
+                    <span class="activity-points">+5 pts</span>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h6 class="activity-title">Purchased eco-friendly cleaning supplies</h6>
+                        <small class="activity-time">
+                            <i class="far fa-clock"></i> Yesterday at 3:15 PM
+                        </small>
+                    </div>
+                    <span class="activity-points">+3 pts</span>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h6 class="activity-title">Reduced carbon footprint by 10kg this week</h6>
+                        <small class="activity-time">
+                            <i class="far fa-clock"></i> Monday at 9:30 AM
+                        </small>
+                    </div>
+                    <span class="activity-points">+8 pts</span>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h6 class="activity-title">Achieved Green Champion status</h6>
+                        <small class="activity-time">
+                            <i class="far fa-clock"></i> Last Friday
+                        </small>
+                    </div>
+                    <span class="activity-points">+15 pts</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize animated elements
+        const animateElements = () => {
+            const elements = document.querySelectorAll('.stat-card, .activity-card, .section-title, .impact-graph-card');
+            
+            elements.forEach((element, index) => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (elementPosition < windowHeight - 100) {
+                    setTimeout(() => {
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }, index * 100);
+                }
+            });
+        };
+        
+        // Set initial state
+        const animatedElements = document.querySelectorAll('.stat-card, .activity-card, .section-title, .impact-graph-card');
+        animatedElements.forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+            element.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+        });
+        
+        // Add scroll event listener
+        window.addEventListener('scroll', animateElements);
+        
+        // Trigger once on load
+        animateElements();
+        
+        // Tab functionality
+        const tabs = document.querySelectorAll('.impact-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                updateCharts(this.dataset.period);
+            });
+        });
+        
+        // Impact Trend Chart
+        const impactTrendCtx = document.getElementById('impactTrendChart').getContext('2d');
+        const impactTrendChart = new Chart(impactTrendCtx, {
+            type: 'line',
+            data: getChartData('week'),
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: 'rgba(26, 46, 53, 0.95)',
+                        titleFont: {
+                            size: 14,
+                            weight: '600'
+                        },
+                        bodyFont: {
+                            size: 13
+                        },
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            drawBorder: false,
+                            color: 'rgba(0,0,0,0.05)'
+                        },
+                        ticks: {
+                            color: '#64748b'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false,
+                        },
+                        ticks: {
+                            color: '#64748b'
+                        }
+                    }
+                },
+                elements: {
+                    line: {
+                        tension: 0.3,
+                        borderWidth: 2,
+                    },
+                    point: {
+                        radius: 4,
+                        hoverRadius: 6,
+                        borderWidth: 2
+                    }
+                }
+            }
+        });
+        
+        // Comparison Chart
+        const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+        const comparisonChart = new Chart(comparisonCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Carbon', 'Water', 'Waste', 'Energy', 'Transport'],
+                datasets: [
+                    {
+                        label: 'Your Impact',
+                        data: [10, 20, 15, 12, 8],
+                        backgroundColor: '#2e8b57',
+                        borderRadius: 4,
+                    },
+                    {
+                        label: 'Local Average',
+                        data: [15, 25, 10, 18, 12],
+                        backgroundColor: '#cbd5e1',
+                        borderRadius: 4,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(26, 46, 53, 0.95)',
+                        titleFont: {
+                            size: 14,
+                            weight: '600'
+                        },
+                        bodyFont: {
+                            size: 13
+                        },
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            drawBorder: false,
+                            color: 'rgba(0,0,0,0.05)'
+                        },
+                        ticks: {
+                            color: '#64748b'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false,
+                        },
+                        ticks: {
+                            color: '#64748b'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Eco Score Chart
+        const ecoScoreCtx = document.getElementById('ecoScoreChart').getContext('2d');
+        const ecoScoreChart = new Chart(ecoScoreCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Completed', 'Remaining'],
+                datasets: [{
+                    data: [82, 18],
+                    backgroundColor: [
+                        '#2e8b57',
+                        '#f1f5f9'
+                    ],
+                    borderWidth: 0,
+                    cutout: '80%',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+                },
+            }
+        });
+        
+        // Function to update charts based on selected period
+        function updateCharts(period) {
+            impactTrendChart.data = getChartData(period);
+            impactTrendChart.update();
+        }
+        
+        // Function to generate chart data based on period
+        function getChartData(period) {
+            if (period === 'week') {
+                return {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [
+                        {
+                            label: 'Carbon Saved (kg)',
+                            data: [1.2, 1.5, 1.8, 2.1, 1.9, 0.8, 0.5],
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            fill: true,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#ef4444'
+                        },
+                        {
+                            label: 'Water Saved (L)',
+                            data: [3, 4, 5, 5.3, 4.8, 2.5, 1.2],
+                            borderColor: '#0ea5e9',
+                            backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                            fill: true,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#0ea5e9'
+                        },
+                        {
+                            label: 'Waste Diverted (kg)',
+                            data: [0.8, 1.2, 1.5, 1.2, 1.8, 0.5, 0.3],
+                            borderColor: '#16a34a',
+                            backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                            fill: true,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#16a34a'
+                        }
+                    ]
+                };
+            } else if (period === 'month') {
+                return {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    datasets: [
+                        {
+                            label: 'Carbon Saved (kg)',
+                            data: [5.2, 6.5, 7.8, 8.1],
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            fill: true,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#ef4444'
+                        },
+                        {
+                            label: 'Water Saved (L)',
+                            data: [12, 15, 18, 20],
+                            borderColor: '#0ea5e9',
+                            backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                            fill: true,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#0ea5e9'
+                        },
+                        {
+                            label: 'Waste Diverted (kg)',
+                            data: [3.8, 4.2, 4.5, 5.2],
+                            borderColor: '#16a34a',
+                            backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                            fill: true,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#16a34a'
+                        }
+                    ]
+                };
+            } else {
+                return {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [
+                        {
+                            label: 'Carbon Saved (kg)',
+                            data: [15, 18, 22, 25, 28, 30, 32, 35, 38, 40, 42, 45],
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            fill: true,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#ef4444'
+                        },
+                        {
+                            label: 'Water Saved (L)',
+                            data: [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85],
+                            borderColor: '#0ea5e9',
+                            backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                            fill: true,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#0ea5e9'
+                        },
+                        {
+                            label: 'Waste Diverted (kg)',
+                            data: [12, 15, 18, 20, 22, 25, 28, 30, 32, 35, 38, 40],
+                            borderColor: '#16a34a',
+                            backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                            fill: true,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#16a34a'
+                        }
+                    ]
+                };
+            }
+        }
+        
+        // Simulate real-time data updates
+        setInterval(() => {
+            // Randomly update one of the stat cards
+            const randomStat = Math.floor(Math.random() * 3);
+            const statValues = document.querySelectorAll('.stat-value');
+            const progressBars = document.querySelectorAll('.progress-bar');
+            const progressLabels = document.querySelectorAll('.progress-label span:last-child');
+            
+            if (randomStat === 0) {
+                // Carbon
+                const newValue = (10 + Math.random() * 2).toFixed(1);
+                const newProgress = Math.min(100, Math.floor(72 + Math.random() * 10));
+                statValues[0].textContent = `${newValue} kg`;
+                progressBars[0].style.width = `${newProgress}%`;
+                progressLabels[0].textContent = `${newProgress}%`;
+            } else if (randomStat === 1) {
+                // Water
+                const newValue = (20 + Math.random() * 5).toFixed(1);
+                const newProgress = Math.min(100, Math.floor(65 + Math.random() * 10));
+                statValues[1].textContent = `${newValue} L`;
+                progressBars[1].style.width = `${newProgress}%`;
+                progressLabels[1].textContent = `${newProgress}%`;
+            } else {
+                // Waste
+                const newValue = (5 + Math.random() * 2).toFixed(1);
+                const newProgress = Math.min(100, Math.floor(85 + Math.random() * 5));
+                statValues[2].textContent = `${newValue} kg`;
+                progressBars[2].style.width = `${newProgress}%`;
+                progressLabels[2].textContent = `${newProgress}%`;
+            }
+        }, 5000);
+    });
+</script>
+{% endblock %}

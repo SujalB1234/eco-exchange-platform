@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - Eco-Friendly Exchange</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0288d1;
+            --primary-dark: #0277bd;
+            --secondary: #4CAF50;
+            --danger: #f44336;
+            --light: #f5f5f5;
+            --dark: #212121;
+            --gray: #757575;
+            --light-gray: #e0e0e0;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #f9f9f9;
+        }
+
+        /* Header */
+        .site-header {
+            background-color: var(--white);
+            box-shadow: var(--shadow-sm);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: var(--secondary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        /* Product Section */
+        .product-section {
+            background-color: var(--white);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .product-header {
+            display: flex;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .product-images {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .product-image-main {
+            width: 100%;
+            height: 400px;
+            object-fit: contain;
+            border-radius: var(--radius-md);
+            background-color: #f5f5f5;
+            padding: 1rem;
+        }
+
+        .product-info {
+            flex: 2;
+            min-width: 300px;
+        }
+
+        .product-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .product-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .status-available {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .status-reserved {
+            background-color: #FF9800;
+            color: white;
+        }
+
+        .status-sold {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--danger);
+            margin: 1rem 0;
+        }
+
+        .product-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            padding: 1rem 0;
+            border-top: 1px solid var(--light-gray);
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9375rem;
+        }
+
+        .meta-item i {
+            color: var(--primary);
+            width: 20px;
+            text-align: center;
+        }
+
+        .product-description {
+            color: var(--gray);
+            line-height: 1.7;
+            margin: 1.5rem 0;
+            white-space: pre-line;
+        }
+
+        .product-contact-info {
+            background-color: #f5f9ff;
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            margin-top: 2rem;
+        }
+
+        .contact-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .contact-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .contact-item i {
+            color: var(--primary);
+            font-size: 1.125rem;
+        }
+
+        .contact-link {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .contact-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .map-link {
+            color: var(--gray);
+            margin-left: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .map-link:hover {
+            color: var(--primary);
+        }
+
+        .contact-availability {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .availability-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .availability-times {
+            color: var(--gray);
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-success {
+            background-color: var(--secondary);
+            color: var(--white);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        /* Similar Products */
+        .similar-products {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .similar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .similar-card {
+            background-color: var(--white);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .similar-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .similar-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background-color: #f5f5f5;
+        }
+
+        .similar-body {
+            padding: 1.25rem;
+        }
+
+        .similar-title {
+            font-size: 1.0625rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .similar-price {
+            font-weight: 700;
+            color: var(--danger);
+        }
+
+        /* Chat Box */
+        .chat-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            z-index: 90;
+            transition: all 0.2s ease;
+        }
+
+        .chat-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .chat-toggle i {
+            font-size: 1.5rem;
+        }
+
+        .chat-box {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 350px;
+            max-height: 500px;
+            background-color: var(--white);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            display: none;
+            flex-direction: column;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-title {
+            font-weight: 500;
+        }
+
+        .close-chat {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.75rem;
+            border-radius: var(--radius-md);
+            font-size: 0.9375rem;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .received {
+            background-color: var(--white);
+            align-self: flex-start;
+            border-bottom-left-radius: var(--radius-sm);
+        }
+
+        .sent {
+            background-color: var(--primary);
+            color: var(--white);
+            align-self: flex-end;
+            border-bottom-right-radius: var(--radius-sm);
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--gray);
+            margin-top: 0.25rem;
+            text-align: right;
+        }
+
+        .chat-input-area {
+            padding: 1rem;
+            border-top: 1px solid var(--light-gray);
+            background-color: var(--white);
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--radius-md);
+            font-size: 0.9375rem;
+        }
+
+        .chat-input button {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 0 1.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .chat-input button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Footer */
+        .site-footer {
+            background-color: var(--dark);
+            color: var(--white);
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-col h3 {
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+            color: var(--white);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #bdbdbd;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #bdbdbd;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .product-header {
+                flex-direction: column;
+                padding: 1.5rem;
+            }
+
+            .product-image-main {
+                height: 300px;
+            }
+
+            .chat-box {
+                width: 100%;
+                bottom: 0;
+                right: 0;
+                border-radius: var(--radius-md) var(--radius-md) 0 0;
+            }
+
+            .chat-toggle {
+                bottom: 1rem;
+                right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Site Header -->
+    <header class="site-header">
+        <div class="header-container">
+            <a href="#" class="logo">
+                <i class="fas fa-leaf"></i>
+                <span>EcoExchange</span>
+            </a>
+            <nav class="nav-links">
+                <a href="#">Home</a>
+                <a href="#">Products</a>
+                <a href="#">About</a>
+                <a href="#">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <div class="product-section">
+            <div class="product-header">
+                <div class="product-images">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image-main">
+                    {% else %}
+                        <div class="product-image-main" style="display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-camera" style="font-size: 3rem; color: #bdbdbd;"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <h1 class="product-title">{{ product.name }}</h1>
+                    
+                    <div class="product-status status-{{ product.status }}">
+                        {{ product.get_status_display }}
+                    </div>
+                    
+                    {% if product.status == 'for_sale' %}
+                        <div class="product-price">Rs. {{ product.price }}</div>
+                    {% endif %}
+                    
+                    <div class="product-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-tag"></i>
+                            <span>
+                                {% if product.category %}
+                                    {{ product.category.name }}
+                                {% else %}
+                                    No category
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        {% if product.eco_impact %}
+                        <div class="meta-item">
+                            <i class="fas fa-leaf"></i>
+                            <span>Reduces {{ product.eco_impact }}kg CO2</span>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="meta-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Posted {{ product.created_at|date:"M d, Y" }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="product-description">
+                        {{ product.description }}
+                    </div>
+                    
+                    <!-- Updated Contact Section -->
+                    <div class="product-contact-info">
+                        <h3 class="contact-title">Contact Seller</h3>
+                        <div class="contact-details">
+                            {% if product.contact_number %}
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <a href="tel:{{ product.contact_number }}" class="contact-link">{{ product.contact_number }}</a>
+                            </div>
+                            {% endif %}
+                            
+                            {% if product.location %}
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ product.location }}</span>
+                                {% if product.location_link %}
+                                <a href="{{ product.location_link }}" target="_blank" class="map-link" title="View on map">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                            
+                            {% if product.seller.email %}
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <a href="mailto:{{ product.seller.email }}" class="contact-link">{{ product.seller.email }}</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if product.available_times %}
+                        <div class="contact-availability">
+                            <h4 class="availability-title">Available Times</h4>
+                            <div class="availability-times">{{ product.available_times }}</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="product-actions">
+                        <button class="btn btn-primary" id="openChatBtn">
+                            <i class="fas fa-comment-dots"></i> Chat Now
+                        </button>
+                        
+                        {% if request.user == product.seller %}
+                            <a href="{% url 'edit_product' product.id %}" class="btn btn-success">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{% url 'confirm_delete' product.id %}" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        {% else %}
+                            <button class="btn btn-outline">
+                                <i class="fas fa-heart"></i> Save
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% if similar_products %}
+        <section class="similar-products">
+            <h2 class="section-title">Similar Products</h2>
+            <div class="similar-grid">
+                {% for similar_product in similar_products %}
+                    <a href="{% url 'product_detail' similar_product.id %}" class="similar-card">
+                        {% if similar_product.image %}
+                            <img src="{{ similar_product.image.url }}" alt="{{ similar_product.name }}" class="similar-img">
+                        {% else %}
+                            <div class="similar-img" style="display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-camera" style="font-size: 2rem; color: #bdbdbd;"></i>
+                            </div>
+                        {% endif %}
+                        <div class="similar-body">
+                            <h3 class="similar-title">{{ similar_product.name }}</h3>
+                            <div class="similar-price">Rs. {{ similar_product.price }}</div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <!-- Site Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>EcoExchange</h3>
+                <p>Sustainable shopping for a greener future. Buy and sell pre-loved items to reduce waste.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Products</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Categories</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Furniture</a></li>
+                    <li><a href="#">Electronics</a></li>
+                    <li><a href="#">Clothing</a></li>
+                    <li><a href="#">Books</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Connect</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+                    <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+                    <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2023 EcoExchange. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Chat Toggle Button -->
+    <div class="chat-toggle" id="chatToggle">
+        <i class="fas fa-comment-dots"></i>
+    </div>
+
+    <!-- Chat Box -->
+    <div class="chat-box" id="chatBox">
+        <div class="chat-header">
+            <h3 class="chat-title">Chat with Seller</h3>
+            <button class="close-chat" id="closeChat">&times;</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message received">
+                Hello! I'm interested in your {{ product.name }}. Is it still available?
+                <div class="message-time">10:30 AM</div>
+            </div>
+            <div class="message sent">
+                Yes, it's still available. Would you like to come see it?
+                <div class="message-time">10:32 AM</div>
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Type your message...">
+                <button id="sendMessageBtn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Chat functionality
+            const chatToggle = document.getElementById('chatToggle');
+            const chatBox = document.getElementById('chatBox');
+            const closeChat = document.getElementById('closeChat');
+            const openChatBtn = document.getElementById('openChatBtn');
+            const messageInput = document.getElementById('messageInput');
+            const sendMessageBtn = document.getElementById('sendMessageBtn');
+            const chatMessages = document.getElementById('chatMessages');
+
+            // Toggle chat visibility
+            function toggleChat() {
+                chatBox.style.display = chatBox.style.display === 'flex' ? 'none' : 'flex';
+                scrollToBottom();
+            }
+
+            // Open chat from product button
+            function openChat() {
+                chatBox.style.display = 'flex';
+                scrollToBottom();
+            }
+
+            // Close chat
+            function closeChatWindow() {
+                chatBox.style.display = 'none';
+            }
+
+            // Scroll to bottom of chat
+            function scrollToBottom() {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // Add a new message to the chat
+            function addMessage(text, isReceived) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                messageDiv.classList.add(isReceived ? 'received' : 'sent');
+                
+                const now = new Date();
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const timeString = `${hours}:${minutes}`;
+                
+                messageDiv.innerHTML = `
+                    ${text}
+                    <div class="message-time">${timeString}</div>
+                `;
+                
+                chatMessages.appendChild(messageDiv);
+                scrollToBottom();
+            }
+
+            // Send a message
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                if (message) {
+                    addMessage(message, false);
+                    messageInput.value = '';
+                    
+                    // Simulate response after 1-3 seconds
+                    setTimeout(() => {
+                        const responses = [
+                            "Thanks for your message!",
+                            "The product is still available.",
+                            "When would you like to see it?",
+                            "Can we discuss the price?"
+                        ];
+                        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                        addMessage(randomResponse, true);
+                    }, 1000 + Math.random() * 2000);
+                }
+            }
+
+            // Event listeners
+            chatToggle.addEventListener('click', toggleChat);
+            openChatBtn.addEventListener('click', openChat);
+            closeChat.addEventListener('click', closeChatWindow);
+
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            sendMessageBtn.addEventListener('click', sendMessage);
+
+            // Initialize with a welcome message
+            setTimeout(() => {
+                addMessage("Hello! I'm the seller of this item. How can I help you?", true);
+            }, 500);
+        });
+    </script>
+</body>
+</html>

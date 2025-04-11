@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - FYPProject</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(45deg, green, #33AEFF);
+            font-family: 'Poppins', sans-serif;
+        }
+        .login-container {
+            max-width: 400px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            height: 50px;
+            padding-left: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #0062E6;
+            box-shadow: 0 0 10px rgba(0, 98, 230, 0.4);
+        }
+
+        .icon {
+            position: absolute;
+            top: 14px;
+            left: 12px;
+            color: #0062E6;
+        }
+
+        .login-btn {
+            background-color: #0062E6;
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background-color: #0050B3;
+        }
+
+        .forgot-password, .sign-up-link {
+            font-size: 0.9rem;
+        }
+
+        .forgot-password a, .sign-up-link a {
+            color: #0062E6;
+            text-decoration: none;
+        }
+
+        .forgot-password a:hover, .sign-up-link a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .footer a {
+            color: #0062E6;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-floating .form-control {
+            padding-left: 40px;
+        }
+
+        .form-floating label {
+            padding-left: 40px;
+        }
+
+        .form-floating {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="login-container">
+            <h3 class="text-center mb-4">Login to Your Account</h3>
+
+            <!-- Display Django Messages -->
+            {% if messages %}
+                <div class="alert alert-danger text-center" role="alert">
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                
+                <!-- Username Field -->
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="username" name="username" required placeholder="Enter your username">
+                    <label for="username">Username</label>
+                    <i class="fas fa-user icon"></i>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="password" name="password" required placeholder="Enter your password">
+                    <label for="password">Password</label>
+                    <i class="fas fa-lock icon"></i>
+                </div>
+
+                <!-- Role Selection (User or Recycler) -->
+                <div class="mb-3">
+                    <label for="role" class="form-label">Select Your Role</label>
+                    <select class="form-control" id="role" name="role" required>
+                        <option value="user">User</option>
+                        <option value="recycler">Recycling Worker</option>
+                    </select>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" class="login-btn">Login</button>
+            </form>
+
+            <!-- Forgot Password Link -->
+            <p class="forgot-password text-end mt-3">
+                <a href="#">Forgot password?</a>
+            </p>
+
+            <!-- Sign Up Link -->
+            <p class="sign-up-link text-center mt-3">
+                Don't have an account? <a href="{% url 'signup' %}">Sign up</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="footer">
+        <p>© 2025 FYPProject. All Rights Reserved.</p>
+    </div>
+
+    <!-- Bootstrap JS (optional for Bootstrap components) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

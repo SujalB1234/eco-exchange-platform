@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #0f9d58, #2575fc);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .signup-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            width: 400px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .textbox {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .textbox input, .textbox select {
+            width: 100%;
+            padding: 12px;
+            padding-left: 45px;
+            border-radius: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        .textbox .material-icons {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2575fc;
+            font-size: 24px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #2575fc;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0f9d58;
+        }
+
+        .login-link {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #2575fc;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="signup-container">
+        <h2>Create Your Account</h2>
+
+        <!-- Display Django Messages -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <p style="color: red; font-size: 14px;">{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form action="{% url 'signup' %}" method="POST">
+            {% csrf_token %}
+
+            <div class="textbox">
+                <i class="material-icons">person</i>
+                <input type="text" placeholder="Username" name="username" required>
+            </div>
+            <div class="textbox">
+                <i class="material-icons">email</i>
+                <input type="email" placeholder="Email" name="email" required>
+            </div>
+            <div class="textbox">
+                <i class="material-icons">lock</i>
+                <input type="password" placeholder="Password" name="password" required>
+            </div>
+            <div class="textbox">
+                <i class="material-icons">lock</i>
+                <input type="password" placeholder="Confirm Password" name="confirm_password" required>
+            </div>
+
+            <!-- Role Selection Dropdown -->
+            <div class="textbox">
+                <i class="material-icons">group</i>
+                <select name="role" required>
+                    <option value="user">User</option>
+                    <option value="recycler">Recycling Worker</option>
+                </select>
+            </div>
+
+            <input type="submit" value="Sign Up" class="btn">
+
+            <div class="login-link">
+                <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+            </div>
+        </form>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Impact Dashboard</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS for extra styling -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .sidebar {
+            background-color: #2c3e50;
+            color: white;
+            height: 100vh;
+            padding-top: 20px;
+            position: fixed;
+            width: 250px;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            display: block;
+            font-size: 16px;
+        }
+        .sidebar a:hover {
+            background-color: #34495e;
+        }
+        .sidebar .profile-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 20px auto;
+            display: block;
+        }
+        .sidebar .profile-name {
+            font-weight: bold;
+            text-align: center;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+        .card-custom {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            border: none;
+        }
+        .card-custom:hover {
+            transform: translateY(-5px);
+        }
+        .card-header {
+            background-color: #27ae60;
+            color: white;
+            font-weight: bold;
+        }
+        .navbar-custom {
+            background-color: #27ae60;
+            color: white;
+        }
+        .notification-badge {
+            background-color: #f39c12;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 50%;
+            font-size: 14px;
+        }
+        .impact-badge {
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 20px;
+        }
+        .eco-positive {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .eco-neutral {
+            background-color: #3498db;
+            color: white;
+        }
+        .eco-negative {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+        }
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        .progress-eco {
+            height: 25px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar d-flex flex-column p-3">
+        <img src="https://via.placeholder.com/60" alt="User Avatar" class="profile-img">
+        <div class="profile-name">Eco Warrior</div>
+        <a href="#"><i class="fas fa-home me-2"></i> Dashboard</a>
+        <a href="#"><i class="fas fa-leaf me-2"></i> Eco Impact</a>
+        <a href="#"><i class="fas fa-recycle me-2"></i> Recycling</a>
+        <a href="#"><i class="fas fa-shopping-bag me-2"></i> Products</a>
+        <a href="#"><i class="fas fa-bell me-2"></i> Notifications <span class="notification-badge">3</span></a>
+        <a href="#"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-custom mb-4">
+            <div class="container-fluid">
+                <h4 class="navbar-text">Your Eco Impact Dashboard</h4>
+                <span class="navbar-text">
+                    <i class="fas fa-calendar-alt me-2"></i> Today: <span id="current-date"></span>
+                </span>
+            </div>
+        </nav>
+
+        <div class="container-fluid">
+            <!-- Impact Summary Section -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card card-custom h-100">
+                        <div class="stat-card">
+                            <div class="stat-icon text-success">
+                                <i class="fas fa-cloud"></i>
+                            </div>
+                            <div class="stat-value" id="co2-saved">1,245</div>
+                            <div class="stat-label">CO₂ SAVED (kg)</div>
+                            <div class="mt-3">
+                                <span class="impact-badge eco-positive">+15% this month</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-custom h-100">
+                        <div class="stat-card">
+                            <div class="stat-icon text-primary">
+                                <i class="fas fa-tint"></i>
+                            </div>
+                            <div class="stat-value" id="water-saved">3,784</div>
+                            <div class="stat-label">WATER SAVED (liters)</div>
+                            <div class="mt-3">
+                                <span class="impact-badge eco-positive">+8% this month</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-custom h-100">
+                        <div class="stat-card">
+                            <div class="stat-icon text-warning">
+                                <i class="fas fa-trash-alt"></i>
+                            </div>
+                            <div class="stat-value" id="waste-reduced">542</div>
+                            <div class="stat-label">WASTE DIVERTED (kg)</div>
+                            <div class="mt-3">
+                                <span class="impact-badge eco-neutral">+2% this month</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="card card-custom h-100">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line me-2"></i> Monthly Eco Impact
+                        </div>
+                        <div class="card-body">
+                            <canvas id="monthlyImpactChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-custom h-100">
+                        <div class="card-header">
+                            <i class="fas fa-chart-pie me-2"></i> Impact Distribution
+                        </div>
+                        <div class="card-body">
+                            <canvas id="impactDistributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress and Goals Section -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card card-custom h-100">
+                        <div class="card-header">
+                            <i class="fas fa-bullseye me-2"></i> Annual Goals Progress
+                        </div>
+                        <div class="card-body">
+                            <h6 class="mb-3">CO₂ Reduction Goal (1,500 kg)</h6>
+                            <div class="progress mb-4 progress-eco">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            
+                            <h6 class="mb-3">Water Conservation Goal (5,000 liters)</h6>
+                            <div class="progress mb-4 progress-eco">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            
+                            <h6 class="mb-3">Waste Diversion Goal (800 kg)</h6>
+                            <div class="progress mb-4 progress-eco">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card card-custom h-100">
+                        <div class="card-header">
+                            <i class="fas fa-trophy me-2"></i> Recent Achievements
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex mb-3">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-medal text-warning fa-2x"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6>Eco Warrior Level 3</h6>
+                                    <p class="mb-0">Reached for saving 1,000kg of CO₂ this year</p>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex mb-3">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-recycle text-success fa-2x"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6>Recycling Champion</h6>
+                                    <p class="mb-0">Recycled 50+ items this month</p>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-leaf text-primary fa-2x"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6>Water Saver</h6>
+                                    <p class="mb-0">Saved 3,000+ liters of water</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <!-- Chart.js for Chart Visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // Set current date
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', options);
+
+        // Sample data for charts
+        const monthlyData = {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            co2: [120, 190, 130, 170, 210, 190, 230],
+            water: [350, 420, 380, 450, 520, 480, 550],
+            waste: [45, 60, 55, 70, 80, 75, 90]
+        };
+
+        // Monthly Impact Chart (Line Chart)
+        const monthlyCtx = document.getElementById('monthlyImpactChart').getContext('2d');
+        const monthlyChart = new Chart(monthlyCtx, {
+            type: 'line',
+            data: {
+                labels: monthlyData.labels,
+                datasets: [
+                    {
+                        label: 'CO₂ Saved (kg)',
+                        data: monthlyData.co2,
+                        borderColor: '#27ae60',
+                        backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Water Saved (liters)',
+                        data: monthlyData.water,
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Waste Diverted (kg)',
+                        data: monthlyData.waste,
+                        borderColor: '#f39c12',
+                        backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Impact Amount'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Impact Distribution Chart (Doughnut Chart)
+        const distributionCtx = document.getElementById('impactDistributionChart').getContext('2d');
+        const distributionChart = new Chart(distributionCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Recycling', 'Products', 'Transport', 'Energy'],
+                datasets: [{
+                    data: [35, 25, 20, 20],
+                    backgroundColor: [
+                        '#27ae60',
+                        '#3498db',
+                        '#f39c12',
+                        '#9b59b6'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.raw}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Animate statistics counting up
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                obj.innerHTML = value.toLocaleString();
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Start animations when page loads
+        window.addEventListener('load', () => {
+            animateValue('co2-saved', 0, 1245, 2000);
+            animateValue('water-saved', 0, 3784, 2000);
+            animateValue('waste-reduced', 0, 542, 2000);
+        });
+    </script>
+</body>
+</html>

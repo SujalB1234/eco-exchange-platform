@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>FYPProject - Add Product</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #e0f7fa, #80deea);
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .form-container {
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+        }
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+        }
+        .submit-button {
+            background: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background 0.2s;
+            font-family: 'Poppins', sans-serif;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .submit-button:hover {
+            background: #388E3C;
+        }
+        .price-group {
+            display: none; /* Initially hide the price field */
+        }
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .back-button {
+            background: #3498db;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+        }
+        .back-button:hover {
+            background: #2980b9;
+            color: #fff;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .required-field::after {
+            content: " *";
+            color: #e74c3c;
+        }
+        .eco-impact-section {
+            margin: 25px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        .eco-impact-section h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h2>List a New Product</h2>
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <div class="error-message">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <div class="form-group">
+                    <label for="{{ form.name.id_for_label }}" class="required-field">Product Name</label>
+                    <input type="text" 
+                           name="{{ form.name.name }}" 
+                           id="{{ form.name.id_for_label }}" 
+                           class="form-control" 
+                           value="{{ form.name.value|default_if_none:'' }}"
+                           required>
+                    {% if form.name.errors %}
+                        <div class="error-message">
+                            {% for error in form.name.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.description.id_for_label }}" class="required-field">Description</label>
+                    <textarea name="{{ form.description.name }}" 
+                              id="{{ form.description.id_for_label }}" 
+                              class="form-control" 
+                              required>{{ form.description.value|default_if_none:'' }}</textarea>
+                    {% if form.description.errors %}
+                        <div class="error-message">
+                            {% for error in form.description.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_category" class="required-field">Category</label>
+                    <select name="category" id="id_category" class="form-select" required>
+                        <option value="">Select a category</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" 
+                                {% if form.category.value|stringformat:"s" == category.id|stringformat:"s" %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% if form.category.errors %}
+                        <div class="error-message">
+                            {% for error in form.category.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.status.id_for_label }}" class="required-field">Status</label>
+                    <select name="{{ form.status.name }}" 
+                            id="{{ form.status.id_for_label }}" 
+                            class="form-select" 
+                            required>
+                        {% for choice in form.status.field.choices %}
+                            <option value="{{ choice.0 }}"
+                                {% if form.status.value|stringformat:"s" == choice.0|stringformat:"s" %}selected{% endif %}>
+                                {{ choice.1 }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% if form.status.errors %}
+                        <div class="error-message">
+                            {% for error in form.status.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group price-group" id="price-group">
+                    <label for="{{ form.price.id_for_label }}" class="required-field">Price (Rs.)</label>
+                    <input type="number" 
+                           name="{{ form.price.name }}" 
+                           id="{{ form.price.id_for_label }}" 
+                           class="form-control" 
+                           value="{{ form.price.value|default_if_none:'' }}"
+                           min="0"
+                           step="0.01">
+                    {% if form.price.errors %}
+                        <div class="error-message">
+                            {% for error in form.price.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Eco Impact Section -->
+                <div class="eco-impact-section">
+                    <h3>Environmental Impact Estimates</h3>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.estimated_co2_saving.id_for_label }}">Estimated CO₂ Saved (kg)</label>
+                        <input type="number" 
+                               name="{{ form.estimated_co2_saving.name }}" 
+                               id="{{ form.estimated_co2_saving.id_for_label }}" 
+                               class="form-control" 
+                               value="{{ form.estimated_co2_saving.value|default_if_none:'' }}"
+                               min="0"
+                               step="0.1">
+                        {% if form.estimated_co2_saving.errors %}
+                            <div class="error-message">
+                                {% for error in form.estimated_co2_saving.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.estimated_water_saving.id_for_label }}">Estimated Water Saved (liters)</label>
+                        <input type="number" 
+                               name="{{ form.estimated_water_saving.name }}" 
+                               id="{{ form.estimated_water_saving.id_for_label }}" 
+                               class="form-control" 
+                               value="{{ form.estimated_water_saving.value|default_if_none:'' }}"
+                               min="0"
+                               step="0.1">
+                        {% if form.estimated_water_saving.errors %}
+                            <div class="error-message">
+                                {% for error in form.estimated_water_saving.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.estimated_waste_reduction.id_for_label }}">Estimated Waste Reduced (kg)</label>
+                        <input type="number" 
+                               name="{{ form.estimated_waste_reduction.name }}" 
+                               id="{{ form.estimated_waste_reduction.id_for_label }}" 
+                               class="form-control" 
+                               value="{{ form.estimated_waste_reduction.value|default_if_none:'' }}"
+                               min="0"
+                               step="0.1">
+                        {% if form.estimated_waste_reduction.errors %}
+                            <div class="error-message">
+                                {% for error in form.estimated_waste_reduction.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.image.id_for_label }}">Product Image</label>
+                    <input type="file" 
+                           name="{{ form.image.name }}" 
+                           id="{{ form.image.id_for_label }}" 
+                           class="form-control"
+                           accept="image/*">
+                    {% if form.image.errors %}
+                        <div class="error-message">
+                            {% for error in form.image.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.contact_number.id_for_label }}" class="required-field">Contact Number</label>
+                    <input type="tel" 
+                           name="{{ form.contact_number.name }}" 
+                           id="{{ form.contact_number.id_for_label }}" 
+                           class="form-control" 
+                           value="{{ form.contact_number.value|default_if_none:'' }}"
+                           pattern="[0-9]{10}"
+                           required>
+                    {% if form.contact_number.errors %}
+                        <div class="error-message">
+                            {% for error in form.contact_number.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.location.id_for_label }}" class="required-field">Location</label>
+                    <input type="text" 
+                           name="{{ form.location.name }}" 
+                           id="{{ form.location.id_for_label }}" 
+                           class="form-control" 
+                           value="{{ form.location.value|default_if_none:'' }}"
+                           required>
+                    {% if form.location.errors %}
+                        <div class="error-message">
+                            {% for error in form.location.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="submit-button">List Product</button>
+            </form>
+        </div>
+
+        <!-- Link to go back to product listing page -->
+        <a href="{% url 'product_listing' %}" class="back-button">Back to Product Listings</a>
+    </div>
+
+    <script>
+        // Function to toggle price field visibility based on status selection
+        function togglePriceField() {
+            const statusSelect = document.getElementById('{{ form.status.id_for_label }}');
+            const priceGroup = document.getElementById('price-group');
+            
+            if (statusSelect.value === 'for_sale') {
+                priceGroup.style.display = 'block';
+                // Make price required when shown
+                document.getElementById('{{ form.price.id_for_label }}').required = true;
+            } else {
+                priceGroup.style.display = 'none';
+                // Remove required when hidden
+                document.getElementById('{{ form.price.id_for_label }}').required = false;
+            }
+        }
+
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', function() {
+            togglePriceField();
+            
+            // Add event listener for status change
+            document.getElementById('{{ form.status.id_for_label }}').addEventListener('change', togglePriceField);
+            
+            // Client-side validation for contact number
+            const contactNumberInput = document.getElementById('{{ form.contact_number.id_for_label }}');
+            if (contactNumberInput) {
+                contactNumberInput.addEventListener('input', function(e) {
+                    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+                });
+            }
+
+            // Auto-calculate eco impacts based on category
+            document.getElementById('id_category').addEventListener('change', function() {
+                const categoryId = this.value;
+                const co2Field = document.getElementById('{{ form.estimated_co2_saving.id_for_label }}');
+                const waterField = document.getElementById('{{ form.estimated_water_saving.id_for_label }}');
+                const wasteField = document.getElementById('{{ form.estimated_waste_reduction.id_for_label }}');
+
+                // Only set values if fields are empty
+                if (!co2Field.value && !waterField.value && !wasteField.value) {
+                    // Example values - adjust based on your categories
+                    if (categoryId === '1') { // Electronics
+                        co2Field.value = '5.0';
+                        waterField.value = '20.0';
+                        wasteField.value = '2.0';
+                    } else if (categoryId === '2') { // Furniture
+                        co2Field.value = '3.0';
+                        waterField.value = '15.0';
+                        wasteField.value = '5.0';
+                    }
+                    // Add more categories as needed
+                }
+            });
+        });
+    </script>
+</body>
+</html>
