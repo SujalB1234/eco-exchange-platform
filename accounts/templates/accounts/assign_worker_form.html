@@ -1,0 +1,11 @@
+<h2>Assign Worker to "{{ product.name }}"</h2>
+<form method="post">
+  {% csrf_token %}
+  <label>Select Worker:</label>
+  <select name="worker_id">
+    {% for worker in workers %}
+      <option value="{{ worker.id }}">{{ worker.name }} ({{ worker.area }})</option>
+    {% endfor %}
+  </select>
+  <button type="submit">Assign</button>
+</form>

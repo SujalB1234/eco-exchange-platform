@@ -1,0 +1,26 @@
+{% extends 'accounts/base.html' %}
+{% block content %}
+  <h2>Recycle Workers</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Area</th>
+        <th>Contact</th>
+        <th>Specialization</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for worker in workers %}
+        <tr>
+          <td>{{ worker.name }}</td>
+          <td>{{ worker.area }}</td>
+          <td>{{ worker.contact }}</td>
+          <td>{{ worker.specialization }}</td>
+          <td>{% if worker.available %}✅ Available{% else %}❌ Unavailable{% endif %}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

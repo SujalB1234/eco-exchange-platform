@@ -1,0 +1,11 @@
+<h2>Unassigned Products</h2>
+<ul>
+  {% for product in products %}
+    <li>
+      {{ product.name }} - {{ product.user.username }}
+      <a href="{% url 'assign_recycle_worker' product.id %}">Assign Worker</a>
+    </li>
+  {% empty %}
+    <li>No unassigned products.</li>
+  {% endfor %}
+</ul>

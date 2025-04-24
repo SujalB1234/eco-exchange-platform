@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product, Category, RecyclableItem
+from .models import Product, Category, RecyclableItem, RecycleWorker
 
 class ProductForm(forms.ModelForm):
     category = forms.ModelChoiceField(
@@ -10,9 +10,9 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['name', 'description', 'category', 'price', 'status', 
-                'image', 'contact_number', 'location',
-                'estimated_co2_saving', 'estimated_water_saving', 
-                'estimated_waste_reduction']
+                  'image', 'contact_number', 'location',
+                  'estimated_co2_saving', 'estimated_water_saving', 
+                  'estimated_waste_reduction']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
@@ -30,8 +30,8 @@ class RecyclableItemForm(forms.ModelForm):
     class Meta:
         model = RecyclableItem
         fields = ['item_name', 'description', 'item_type', 'condition', 'image',
-                'estimated_co2_saving', 'estimated_water_saving', 
-                'estimated_waste_reduction']
+                  'estimated_co2_saving', 'estimated_water_saving', 
+                  'estimated_waste_reduction']
         widgets = {
             'item_name': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
@@ -42,3 +42,15 @@ class RecyclableItemForm(forms.ModelForm):
             'estimated_water_saving': forms.NumberInput(attrs={'class': 'form-control'}),
             'estimated_waste_reduction': forms.NumberInput(attrs={'class': 'form-control'}),
         }
+
+class AssignRecycleWorkerForm(forms.Form):
+    product = forms.ModelChoiceField(
+        queryset=Product.objects.filter(status='Pending'),
+        label="Select Product",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    recycle_worker = forms.ModelChoiceField(
+        queryset=RecycleWorker.objects.all(),
+        label="Select Recycle Worker",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )

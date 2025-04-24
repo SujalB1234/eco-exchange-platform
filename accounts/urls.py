@@ -13,6 +13,7 @@ urlpatterns = [
     path('view_products/<str:status>/', views.view_products, name='view_products'),
     path('home/', views.home_view, name='home'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
+    path('my-products/', views.my_products_view, name='my_products'),
     
     # Add the URL for the user's product list
     path('product/<int:product_id>/', views.product_detail_view, name='product_detail'),
@@ -20,4 +21,8 @@ urlpatterns = [
     # Add the URL for donation information
      path('donations/', views.donation_product_listing_view, name='donation_listing'),
      path('user_dashboard/', views.user_dashboard, name='user_dashboard'),
+
+    path('recycle-workers/', views.recycle_worker_list, name='recycle_worker_list'),
+     path('assign-worker-list/', views.admin_assign_worker_list, name='admin_assign_worker_list'),
+    path('assign-worker/<int:product_id>/', views.assign_recycle_worker, name='assign_recycle_worker'),
 ]
