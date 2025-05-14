@@ -3,21 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>My Profile | Eco Exchange</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     {% load static %}
     <style>
         :root {
-            --primary: #4CAF50;
-            --primary-dark: #3e8e41;
+            --primary: #2E7D32;
+            --primary-light: #4CAF50;
+            --primary-dark: #1B5E20;
+            --secondary: #8BC34A;
+            --accent: #FFC107;
             --light: #f8f9fa;
-            --dark: #212529;
+            --dark: #263238;
             --gray: #6c757d;
             --light-gray: #e9ecef;
             --white: #ffffff;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --success: #388E3C;
+            --danger: #dc3545;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
+            --border-radius: 12px;
         }
 
         * {
@@ -33,35 +41,128 @@
             line-height: 1.6;
         }
 
+        /* Navigation */
+        .navbar {
+            background-color: var(--white);
+            padding: 15px 5%;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .logo:hover {
+            transform: translateY(-2px);
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+
+        .logo span {
+            color: var(--dark);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Main Content */
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 2rem auto;
             padding: 0 20px;
         }
 
+        .profile-section {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .profile-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Profile Card */
         .profile-card {
             background: var(--white);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
             padding: 2rem;
-            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
         }
 
         .profile-header {
-            text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .profile-header h1 {
-            font-size: 2rem;
-            color: var(--primary);
+            font-size: 1.8rem;
+            color: var(--primary-dark);
             margin-bottom: 0.5rem;
         }
 
-        .profile-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .profile-header p {
+            color: var(--gray);
+            font-size: 0.9rem;
         }
 
         .profile-avatar {
@@ -69,21 +170,46 @@
             height: 150px;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid var(--white);
-            box-shadow: var(--shadow);
-            margin-bottom: 1.5rem;
+            border: 5px solid var(--white);
+            box-shadow: var(--shadow-md);
+            margin: 0 auto 1.5rem;
+            transition: var(--transition);
         }
 
-        .profile-details {
-            width: 100%;
-            max-width: 500px;
+        .profile-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Details Card */
+        .details-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            padding: 2rem;
+        }
+
+        .details-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .details-header h2 {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .details-header h2 i {
+            color: var(--primary);
         }
 
         .detail-item {
             display: flex;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--light-gray);
+            margin-bottom: 1.5rem;
         }
 
         .detail-label {
@@ -94,22 +220,33 @@
 
         .detail-value {
             color: var(--dark);
+            flex: 1;
         }
 
-        .edit-profile-form {
+        /* Edit Form */
+        .edit-form {
             background: var(--white);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
             padding: 2rem;
+            margin-top: 30px;
         }
 
         .form-header {
             margin-bottom: 1.5rem;
-            text-align: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--light-gray);
         }
 
         .form-header h2 {
             font-size: 1.5rem;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-header h2 i {
             color: var(--primary);
         }
 
@@ -121,24 +258,28 @@
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 500;
+            color: var(--dark);
         }
 
         .form-control {
             width: 100%;
-            padding: 10px 14px;
+            padding: 12px 16px;
             border: 2px solid var(--light-gray);
             border-radius: 8px;
             font-family: 'Poppins', sans-serif;
             transition: var(--transition);
+            background-color: var(--light);
         }
 
         .form-control:focus {
             border-color: var(--primary);
             outline: none;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+            background-color: var(--white);
         }
 
         textarea.form-control {
-            min-height: 100px;
+            min-height: 120px;
             resize: vertical;
         }
 
@@ -151,15 +292,22 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 10px 14px;
-            background: var(--light-gray);
+            padding: 12px;
+            background: var(--light);
+            border: 2px dashed var(--light-gray);
             border-radius: 8px;
             cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-upload-label:hover {
+            background: rgba(139, 195, 74, 0.1);
+            border-color: var(--secondary);
         }
 
         .file-upload-label i {
             margin-right: 8px;
-            color: var(--gray);
+            color: var(--primary);
         }
 
         .file-upload-input {
@@ -176,81 +324,147 @@
             margin-top: 1rem;
             font-size: 0.9rem;
             color: var(--gray);
+            display: flex;
+            align-items: center;
         }
 
         .remove-image {
-            color: #e74c3c;
+            color: var(--danger);
             cursor: pointer;
             margin-left: 8px;
+            transition: var(--transition);
+        }
+
+        .remove-image:hover {
+            color: #c82333;
         }
 
         .btn {
-            display: block;
-            width: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             background: var(--primary);
             color: var(--white);
             border: none;
-            padding: 12px;
+            padding: 12px 24px;
             font-size: 1rem;
             font-weight: 500;
             border-radius: 8px;
             cursor: pointer;
             transition: var(--transition);
+            text-decoration: none;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
         }
 
         .btn:hover {
             background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(27, 94, 32, 0.3);
         }
 
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: rgba(46, 125, 50, 0.1);
+            color: var(--primary-dark);
+        }
+
+        /* Alerts */
         .alert {
             padding: 12px 16px;
             border-radius: 8px;
             margin-bottom: 1.5rem;
             background-color: #f8f9fa;
             border-left: 4px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        @media (max-width: 600px) {
-            .container {
-                padding: 0 15px;
+        .alert i {
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px;
             }
-            
-            .profile-card,
-            .edit-profile-form {
-                padding: 1.5rem;
+
+            .nav-links {
+                display: none;
             }
-            
+
+            .profile-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .profile-avatar {
+                width: 120px;
+                height: 120px;
+            }
+
             .detail-item {
                 flex-direction: column;
+                gap: 5px;
             }
-            
+
             .detail-label {
-                margin-bottom: 5px;
+                margin-bottom: 0;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="logo">
+            <i class="fas fa-leaf"></i>
+            Eco<span>Exchange</span>
+        </a>
+        <div class="nav-links">
+            <a href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a>
+            <a href="{% url 'my_products' %}"><i class="fas fa-boxes"></i> My Products</a>
+        </div>
+    </nav>
+
     <div class="container">
-        <!-- Display messages -->
+        <!-- Messages -->
         {% if messages %}
             {% for message in messages %}
                 <div class="alert">
+                    <i class="fas fa-info-circle"></i>
                     {{ message }}
                 </div>
             {% endfor %}
         {% endif %}
 
-        <div class="profile-card">
-            <div class="profile-header">
-                <h1>My Profile</h1>
-            </div>
-            
-            <div class="profile-content">
+        <div class="profile-section">
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <h1>My Profile</h1>
+                    <p>Member since {{ user.date_joined|date:"F Y" }}</p>
+                </div>
+                
                 <img id="profile-avatar" 
                      src="{% if user.userprofile.profile_picture %}{{ user.userprofile.profile_picture.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}" 
                      alt="Profile Picture" 
                      class="profile-avatar">
+            </div>
+
+            <!-- Details Card -->
+            <div class="details-card">
+                <div class="details-header">
+                    <h2><i class="fas fa-user-circle"></i> Personal Details</h2>
+                </div>
                 
                 <div class="profile-details">
                     <div class="detail-item">
@@ -264,6 +478,18 @@
                         <span class="detail-value">{{ user.email|default:"Not provided" }}</span>
                     </div>
                     <div class="detail-item">
+                        <span class="detail-label">Location:</span>
+                        <span class="detail-value">
+                            {{ user.userprofile.location|default:"Not specified" }}
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Phone:</span>
+                        <span class="detail-value">
+                            {{ user.userprofile.phone_number|default:"Not provided" }}
+                        </span>
+                    </div>
+                    <div class="detail-item">
                         <span class="detail-label">Bio:</span>
                         <span class="detail-value">
                             {{ user.userprofile.bio|default:"No bio yet" }}
@@ -273,9 +499,10 @@
             </div>
         </div>
         
-        <div class="edit-profile-form">
+        <!-- Edit Form -->
+        <div class="edit-form">
             <div class="form-header">
-                <h2>Edit Profile</h2>
+                <h2><i class="fas fa-user-edit"></i> Edit Profile</h2>
             </div>
             
             <form action="{% url 'edit_profile' %}" method="POST" enctype="multipart/form-data">
@@ -293,6 +520,18 @@
                 </div>
                 
                 <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" name="location" class="form-control"
+                           value="{{ user.userprofile.location|default:'' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone_number">Phone Number</label>
+                    <input type="tel" id="phone_number" name="phone_number" class="form-control"
+                           value="{{ user.userprofile.phone_number|default:'' }}">
+                </div>
+                
+                <div class="form-group">
                     <label for="bio">Bio</label>
                     <textarea id="bio" name="bio" class="form-control" rows="4">{{ user.userprofile.bio|default:'' }}</textarea>
                 </div>
@@ -301,8 +540,8 @@
                     <label>Profile Picture</label>
                     <div class="file-upload">
                         <label class="file-upload-label">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <span>Choose profile picture</span>
+                            <i class="fas fa-camera"></i>
+                            <span>Upload new photo</span>
                         </label>
                         <input type="file" id="profile_picture" name="profile_picture" class="file-upload-input" accept="image/*">
                     </div>
@@ -338,6 +577,23 @@
                 
                 reader.readAsDataURL(e.target.files[0]);
             }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
         });
     </script>
 </body>

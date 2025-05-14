@@ -4,246 +4,418 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>FYPProject - Add Product</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+    <title>Eco Exchange | List Your Product</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
+        :root {
+            --primary: #2ecc71;
+            --primary-dark: #27ae60;
+            --secondary: #3498db;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --gray: #95a5a6;
+            --light-gray: #ecf0f1;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.05);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 15px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #e0f7fa, #80deea);
-            color: #333;
         }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            background-color: #f5f7fa;
+            color: var(--dark);
+            background-image: url('https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-blend-mode: overlay;
+            background-color: rgba(255,255,255,0.9);
+        }
+
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 40px auto;
             padding: 20px;
         }
-        .form-container {
-            background: #ffffff;
-            border-radius: 15px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 30px;
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
         }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        .form-control {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 16px;
-        }
-        textarea.form-control {
-            min-height: 120px;
-            resize: vertical;
-        }
-        .form-select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 16px;
-        }
-        .submit-button {
-            background: #4CAF50;
-            color: #fff;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 16px;
-            transition: background 0.2s;
-            font-family: 'Poppins', sans-serif;
-            width: 100%;
-            margin-top: 10px;
-        }
-        .submit-button:hover {
-            background: #388E3C;
-        }
-        .price-group {
-            display: none; /* Initially hide the price field */
-        }
-        .error-message {
-            color: #e74c3c;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-        .back-button {
-            background: #3498db;
-            color: #fff;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.2s;
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
             text-decoration: none;
-            display: inline-block;
-            margin-top: 20px;
-            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+
+        .logo span {
+            color: var(--dark);
+        }
+
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 30px;
             text-align: center;
+            position: relative;
         }
-        .back-button:hover {
-            background: #2980b9;
-            color: #fff;
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
         }
-        h2 {
-            color: #2c3e50;
+
+        /* Form Container */
+        .form-container {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 40px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        /* Form Elements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .form-group {
             margin-bottom: 25px;
-            text-align: center;
         }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
         .required-field::after {
             content: " *";
             color: #e74c3c;
         }
-        .eco-impact-section {
-            margin: 25px 0;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border-left: 4px solid #4CAF50;
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--radius-sm);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background-color: var(--light);
         }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+        }
+
+        textarea.form-control {
+            min-height: 140px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 1em;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+            box-shadow: 0 4px 6px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(46, 204, 113, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: var(--white);
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(52, 152, 219, 0.4);
+        }
+
+        /* Error Messages */
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .error-message i {
+            margin-right: 5px;
+            font-size: 0.9rem;
+        }
+
+        /* Eco Impact Section */
+        .eco-impact-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: #f8fafc;
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .eco-impact-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="none" stroke="%232ecc71" stroke-width="0.5" opacity="0.1"><path d="M0 0 L100 100 M100 0 L0 100"/></svg>');
+            opacity: 0.1;
+        }
+
         .eco-impact-section h3 {
             margin-top: 0;
-            color: #2c3e50;
+            margin-bottom: 20px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+
+        .eco-impact-section h3 i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+
+        /* File Upload */
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-upload-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            border: 2px dashed var(--light-gray);
+            border-radius: var(--radius-sm);
+            background: var(--light);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .file-upload-label:hover {
+            border-color: var(--primary);
+            background: rgba(46, 204, 113, 0.05);
+        }
+
+        .file-upload-label i {
+            margin-right: 10px;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        /* Price Group */
+        .price-group {
+            display: none;
+            position: relative;
+        }
+
+        .price-group .currency-symbol {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 500;
+            color: var(--gray);
+        }
+
+        .price-group .form-control {
+            padding-left: 35px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .page-title {
+                font-size: 1.8rem;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 25px;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-container {
+            animation: fadeIn 0.5s ease-out forwards;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <header class="header">
+            <a href="{% url 'home' %}" class="logo">
+                <i class="fas fa-leaf"></i>
+                Eco<span>Exchange</span>
+            </a>
+            <a href="{% url 'product_listing' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Listings
+            </a>
+        </header>
+
         <div class="form-container">
-            <h2>List a New Product</h2>
+            <h2 class="page-title">List Your Product</h2>
+            
             <form method="post" enctype="multipart/form-data" novalidate>
                 {% csrf_token %}
                 
                 {% if form.non_field_errors %}
                     <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
                         {% for error in form.non_field_errors %}
                             {{ error }}
                         {% endfor %}
                     </div>
                 {% endif %}
                 
-                <div class="form-group">
-                    <label for="{{ form.name.id_for_label }}" class="required-field">Product Name</label>
-                    <input type="text" 
-                           name="{{ form.name.name }}" 
-                           id="{{ form.name.id_for_label }}" 
-                           class="form-control" 
-                           value="{{ form.name.value|default_if_none:'' }}"
-                           required>
-                    {% if form.name.errors %}
-                        <div class="error-message">
-                            {% for error in form.name.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-                
-                <div class="form-group">
-                    <label for="{{ form.description.id_for_label }}" class="required-field">Description</label>
-                    <textarea name="{{ form.description.name }}" 
-                              id="{{ form.description.id_for_label }}" 
-                              class="form-control" 
-                              required>{{ form.description.value|default_if_none:'' }}</textarea>
-                    {% if form.description.errors %}
-                        <div class="error-message">
-                            {% for error in form.description.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-                
-                <div class="form-group">
-                    <label for="id_category" class="required-field">Category</label>
-                    <select name="category" id="id_category" class="form-select" required>
-                        <option value="">Select a category</option>
-                        {% for category in categories %}
-                            <option value="{{ category.id }}" 
-                                {% if form.category.value|stringformat:"s" == category.id|stringformat:"s" %}selected{% endif %}>
-                                {{ category.name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                    {% if form.category.errors %}
-                        <div class="error-message">
-                            {% for error in form.category.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-                
-                <div class="form-group">
-                    <label for="{{ form.status.id_for_label }}" class="required-field">Status</label>
-                    <select name="{{ form.status.name }}" 
-                            id="{{ form.status.id_for_label }}" 
-                            class="form-select" 
-                            required>
-                        {% for choice in form.status.field.choices %}
-                            <option value="{{ choice.0 }}"
-                                {% if form.status.value|stringformat:"s" == choice.0|stringformat:"s" %}selected{% endif %}>
-                                {{ choice.1 }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                    {% if form.status.errors %}
-                        <div class="error-message">
-                            {% for error in form.status.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-                
-                <div class="form-group price-group" id="price-group">
-                    <label for="{{ form.price.id_for_label }}" class="required-field">Price (Rs.)</label>
-                    <input type="number" 
-                           name="{{ form.price.name }}" 
-                           id="{{ form.price.id_for_label }}" 
-                           class="form-control" 
-                           value="{{ form.price.value|default_if_none:'' }}"
-                           min="0"
-                           step="0.01">
-                    {% if form.price.errors %}
-                        <div class="error-message">
-                            {% for error in form.price.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-                
-                <!-- Eco Impact Section -->
-                <div class="eco-impact-section">
-                    <h3>Environmental Impact Estimates</h3>
-                    
+                <div class="form-grid">
+                    <!-- Product Information -->
                     <div class="form-group">
-                        <label for="{{ form.estimated_co2_saving.id_for_label }}">Estimated CO₂ Saved (kg)</label>
-                        <input type="number" 
-                               name="{{ form.estimated_co2_saving.name }}" 
-                               id="{{ form.estimated_co2_saving.id_for_label }}" 
+                        <label for="{{ form.name.id_for_label }}" class="required-field">Product Name</label>
+                        <input type="text" 
+                               name="{{ form.name.name }}" 
+                               id="{{ form.name.id_for_label }}" 
                                class="form-control" 
-                               value="{{ form.estimated_co2_saving.value|default_if_none:'' }}"
-                               min="0"
-                               step="0.1">
-                        {% if form.estimated_co2_saving.errors %}
+                               value="{{ form.name.value|default_if_none:'' }}"
+                               placeholder="Enter product name"
+                               required>
+                        {% if form.name.errors %}
                             <div class="error-message">
-                                {% for error in form.estimated_co2_saving.errors %}
+                                <i class="fas fa-exclamation-circle"></i>
+                                {% for error in form.name.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
@@ -251,17 +423,37 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="{{ form.estimated_water_saving.id_for_label }}">Estimated Water Saved (liters)</label>
-                        <input type="number" 
-                               name="{{ form.estimated_water_saving.name }}" 
-                               id="{{ form.estimated_water_saving.id_for_label }}" 
-                               class="form-control" 
-                               value="{{ form.estimated_water_saving.value|default_if_none:'' }}"
-                               min="0"
-                               step="0.1">
-                        {% if form.estimated_water_saving.errors %}
+                        <label for="id_category" class="required-field">Category</label>
+                        <select name="category" id="id_category" class="form-control form-select" required>
+                            <option value="">Select a category</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" 
+                                    {% if form.category.value|stringformat:"s" == category.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ category.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.category.errors %}
                             <div class="error-message">
-                                {% for error in form.estimated_water_saving.errors %}
+                                <i class="fas fa-exclamation-circle"></i>
+                                {% for error in form.category.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="{{ form.description.id_for_label }}" class="required-field">Description</label>
+                        <textarea name="{{ form.description.name }}" 
+                                  id="{{ form.description.id_for_label }}" 
+                                  class="form-control" 
+                                  placeholder="Describe your product in detail (materials, condition, etc.)"
+                                  required>{{ form.description.value|default_if_none:'' }}</textarea>
+                        {% if form.description.errors %}
+                            <div class="error-message">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {% for error in form.description.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
@@ -269,81 +461,186 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="{{ form.estimated_waste_reduction.id_for_label }}">Estimated Waste Reduced (kg)</label>
-                        <input type="number" 
-                               name="{{ form.estimated_waste_reduction.name }}" 
-                               id="{{ form.estimated_waste_reduction.id_for_label }}" 
-                               class="form-control" 
-                               value="{{ form.estimated_waste_reduction.value|default_if_none:'' }}"
-                               min="0"
-                               step="0.1">
-                        {% if form.estimated_waste_reduction.errors %}
+                        <label for="{{ form.status.id_for_label }}" class="required-field">Status</label>
+                        <select name="{{ form.status.name }}" 
+                                id="{{ form.status.id_for_label }}" 
+                                class="form-control form-select" 
+                                required>
+                            {% for choice in form.status.field.choices %}
+                                <option value="{{ choice.0 }}"
+                                    {% if form.status.value|stringformat:"s" == choice.0|stringformat:"s" %}selected{% endif %}>
+                                    {{ choice.1 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.status.errors %}
                             <div class="error-message">
-                                {% for error in form.estimated_waste_reduction.errors %}
+                                <i class="fas fa-exclamation-circle"></i>
+                                {% for error in form.status.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
                         {% endif %}
                     </div>
+                    
+                    <div class="form-group price-group" id="price-group">
+                        <label for="{{ form.price.id_for_label }}" class="required-field">Price</label>
+                        <div class="currency-symbol">Rs.</div>
+                        <input type="number" 
+                               name="{{ form.price.name }}" 
+                               id="{{ form.price.id_for_label }}" 
+                               class="form-control" 
+                               value="{{ form.price.value|default_if_none:'' }}"
+                               placeholder="0.00"
+                               min="0"
+                               step="0.01">
+                        {% if form.price.errors %}
+                            <div class="error-message">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {% for error in form.price.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Contact Information -->
+                    <div class="form-group">
+                        <label for="{{ form.contact_number.id_for_label }}" class="required-field">Contact Number</label>
+                        <input type="tel" 
+                               name="{{ form.contact_number.name }}" 
+                               id="{{ form.contact_number.id_for_label }}" 
+                               class="form-control" 
+                               value="{{ form.contact_number.value|default_if_none:'' }}"
+                               placeholder="98XXXXXXXX"
+                               pattern="[0-9]{10}"
+                               required>
+                        {% if form.contact_number.errors %}
+                            <div class="error-message">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {% for error in form.contact_number.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.location.id_for_label }}" class="required-field">Location</label>
+                        <input type="text" 
+                               name="{{ form.location.name }}" 
+                               id="{{ form.location.id_for_label }}" 
+                               class="form-control" 
+                               value="{{ form.location.value|default_if_none:'' }}"
+                               placeholder="Where is the item located?"
+                               required>
+                        {% if form.location.errors %}
+                            <div class="error-message">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {% for error in form.location.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Image Upload -->
+                    <div class="form-group full-width">
+                        <label for="{{ form.image.id_for_label }}">Product Image</label>
+                        <div class="file-upload">
+                            <input type="file" 
+                                   name="{{ form.image.name }}" 
+                                   id="{{ form.image.id_for_label }}" 
+                                   class="file-upload-input"
+                                   accept="image/*">
+                            <label for="{{ form.image.id_for_label }}" class="file-upload-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Click to upload product image (JPEG, PNG)</span>
+                            </label>
+                        </div>
+                        {% if form.image.errors %}
+                            <div class="error-message">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {% for error in form.image.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Eco Impact Section -->
+                    <div class="eco-impact-section full-width">
+                        <h3><i class="fas fa-leaf"></i> Environmental Impact</h3>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="{{ form.estimated_co2_saving.id_for_label }}">Estimated CO₂ Saved (kg)</label>
+                                <input type="number" 
+                                       name="{{ form.estimated_co2_saving.name }}" 
+                                       id="{{ form.estimated_co2_saving.id_for_label }}" 
+                                       class="form-control" 
+                                       value="{{ form.estimated_co2_saving.value|default_if_none:'' }}"
+                                       placeholder="e.g., 5.0"
+                                       min="0"
+                                       step="0.1">
+                                {% if form.estimated_co2_saving.errors %}
+                                    <div class="error-message">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {% for error in form.estimated_co2_saving.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.estimated_water_saving.id_for_label }}">Estimated Water Saved (liters)</label>
+                                <input type="number" 
+                                       name="{{ form.estimated_water_saving.name }}" 
+                                       id="{{ form.estimated_water_saving.id_for_label }}" 
+                                       class="form-control" 
+                                       value="{{ form.estimated_water_saving.value|default_if_none:'' }}"
+                                       placeholder="e.g., 20.0"
+                                       min="0"
+                                       step="0.1">
+                                {% if form.estimated_water_saving.errors %}
+                                    <div class="error-message">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {% for error in form.estimated_water_saving.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.estimated_waste_reduction.id_for_label }}">Estimated Waste Reduced (kg)</label>
+                                <input type="number" 
+                                       name="{{ form.estimated_waste_reduction.name }}" 
+                                       id="{{ form.estimated_waste_reduction.id_for_label }}" 
+                                       class="form-control" 
+                                       value="{{ form.estimated_waste_reduction.value|default_if_none:'' }}"
+                                       placeholder="e.g., 2.0"
+                                       min="0"
+                                       step="0.1">
+                                {% if form.estimated_waste_reduction.errors %}
+                                    <div class="error-message">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        {% for error in form.estimated_waste_reduction.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="{{ form.image.id_for_label }}">Product Image</label>
-                    <input type="file" 
-                           name="{{ form.image.name }}" 
-                           id="{{ form.image.id_for_label }}" 
-                           class="form-control"
-                           accept="image/*">
-                    {% if form.image.errors %}
-                        <div class="error-message">
-                            {% for error in form.image.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.contact_number.id_for_label }}" class="required-field">Contact Number</label>
-                    <input type="tel" 
-                           name="{{ form.contact_number.name }}" 
-                           id="{{ form.contact_number.id_for_label }}" 
-                           class="form-control" 
-                           value="{{ form.contact_number.value|default_if_none:'' }}"
-                           pattern="[0-9]{10}"
-                           required>
-                    {% if form.contact_number.errors %}
-                        <div class="error-message">
-                            {% for error in form.contact_number.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.location.id_for_label }}" class="required-field">Location</label>
-                    <input type="text" 
-                           name="{{ form.location.name }}" 
-                           id="{{ form.location.id_for_label }}" 
-                           class="form-control" 
-                           value="{{ form.location.value|default_if_none:'' }}"
-                           required>
-                    {% if form.location.errors %}
-                        <div class="error-message">
-                            {% for error in form.location.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <button type="submit" class="submit-button">List Product</button>
+                <button type="submit" class="btn btn-primary" style="margin-top: 20px;">
+                    <i class="fas fa-recycle"></i> List Product
+                </button>
             </form>
         </div>
-
-        <!-- Link to go back to product listing page -->
-        <a href="{% url 'product_listing' %}" class="back-button">Back to Product Listings</a>
     </div>
 
     <script>
@@ -378,6 +675,16 @@
                 });
             }
 
+            // File upload label update
+            const fileInput = document.getElementById('{{ form.image.id_for_label }}');
+            const fileLabel = fileInput.nextElementSibling;
+            
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    fileLabel.querySelector('span').textContent = this.files[0].name;
+                }
+            });
+
             // Auto-calculate eco impacts based on category
             document.getElementById('id_category').addEventListener('change', function() {
                 const categoryId = this.value;
@@ -396,6 +703,10 @@
                         co2Field.value = '3.0';
                         waterField.value = '15.0';
                         wasteField.value = '5.0';
+                    } else if (categoryId === '3') { // Clothing
+                        co2Field.value = '2.5';
+                        waterField.value = '30.0';
+                        wasteField.value = '1.5';
                     }
                     // Add more categories as needed
                 }

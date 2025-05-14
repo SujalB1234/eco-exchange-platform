@@ -3,66 +3,103 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Group
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.db.models import Q, Sum
 from django.conf import settings
 import os
-from .models import UserProfile, Product, Category, EcoImpact, RecyclableItem
-from .forms import ProductForm, RecyclableItemForm
-from .models import RecycleWorker
+import logging
+from .models import UserProfile, Product, Category, EcoImpact, RecyclableItem, RecycleWorker, Notification
+from .forms import ProductForm, RecyclableItemForm, AssignRecycleWorkerForm
+from django.http import HttpResponseForbidden
 from django.contrib.admin.views.decorators import staff_member_required
-from .forms import AssignRecycleWorkerForm
+from datetime import datetime
+from django.db.models import Count
+from .models import ContactMessage 
+
+logger = logging.getLogger(__name__)
 
 # ========== AUTHENTICATION VIEWS ==========
 def signup_view(request):
-    """Handle user registration with validation"""
+    """Handle user registration with comprehensive error handling"""
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
         email = request.POST.get('email', '').strip()
         password = request.POST.get('password', '')
         confirm_password = request.POST.get('confirm_password', '')
 
+        # Enhanced validation
         errors = []
         if not all([username, email, password, confirm_password]):
             errors.append("All fields are required.")
-        if password != confirm_password:
+        elif len(username) < 4:
+            errors.append("Username must be at least 4 characters.")
+        elif len(password) < 8:
+            errors.append("Password must be at least 8 characters.")
+        elif password != confirm_password:
             errors.append("Passwords do not match.")
-        if User.objects.filter(username=username).exists():
+        elif User.objects.filter(username=username).exists():
             errors.append("Username is already taken.")
-        if User.objects.filter(email=email).exists():
+        elif User.objects.filter(email=email).exists():
             errors.append("An account with this email already exists.")
 
         if errors:
             for error in errors:
                 messages.error(request, error)
-            return redirect('signup')
+            return render(request, 'accounts/signup.html', {
+                'username': username,
+                'email': email
+            })
 
         try:
             with transaction.atomic():
+                # Create user (this will fail if unique constraints are violated)
                 user = User.objects.create_user(
                     username=username,
                     email=email,
                     password=password
                 )
-                # Create user profile with default picture
-                profile = UserProfile.objects.create(user=user)
                 
-                # Set default profile picture
-                default_pic_path = os.path.join(settings.STATIC_ROOT, 'images/default_profile.png')
-                if os.path.exists(default_pic_path):
-                    with open(default_pic_path, 'rb') as f:
-                        profile.profile_picture.save(
-                            f'default_{user.id}.png',
-                            f,
-                            save=True
-                        )
+                # Create profile with get_or_create as safety measure
+                profile, created = UserProfile.objects.get_or_create(user=user)
+                
+                # Set default profile picture if new profile
+                if created:
+                    default_pic_path = os.path.join(settings.STATIC_ROOT, 'images/default_profile.png')
+                    if os.path.exists(default_pic_path):
+                        with open(default_pic_path, 'rb') as f:
+                            profile.profile_picture.save(
+                                f'default_{user.id}.png',
+                                File(f),
+                                save=True
+                            )
                 
                 messages.success(request, "Account created successfully! Please log in.")
                 return redirect('login')
+
+        except IntegrityError as e:
+            logger.error(f"Signup IntegrityError - Username: {username}, Email: {email}, Error: {str(e)}")
+            
+            # Check for specific constraint violations
+            if 'username' in str(e):
+                messages.error(request, "Username is already taken.")
+            elif 'email' in str(e):
+                messages.error(request, "Email is already registered.")
+            else:
+                messages.error(request, "Account creation failed due to system error. Please try again.")
+            
+            return render(request, 'accounts/signup.html', {
+                'username': username,
+                'email': email
+            })
+            
         except Exception as e:
-            messages.error(request, f"Error creating account: {str(e)}")
-            return redirect('signup')
-    
+            logger.error(f"Signup Unexpected Error: {str(e)}")
+            messages.error(request, "An unexpected error occurred. Please try again.")
+            return render(request, 'accounts/signup.html', {
+                'username': username,
+                'email': email
+            })
+
     return render(request, 'accounts/signup.html')
 
 def login_view(request):
@@ -330,6 +367,7 @@ def donation_product_listing_view(request):
     })
 
 # ========== BASIC VIEWS ==========
+@login_required
 def home_view(request):
     """Home page view"""
     context = {
@@ -339,6 +377,8 @@ def home_view(request):
         'total_co2_saved': 0,
         'total_water_saved': 0,
         'total_waste_reduced': 0,
+        'notifications': [],
+        'user_products': [],
     }
 
     if request.user.is_authenticated:
@@ -349,7 +389,10 @@ def home_view(request):
                 total_water=Sum('water_saved_liters'),
                 total_waste=Sum('waste_diverted_kg')
             )
-            
+
+            notifications = Notification.objects.filter(user=request.user, is_read=False).order_by('-created_at')
+            user_products = Product.objects.filter(user=request.user)
+
             context.update({
                 'username': request.user.get_full_name() or request.user.username,
                 'items_shared': profile.items_shared,
@@ -357,12 +400,28 @@ def home_view(request):
                 'total_co2_saved': eco_stats['total_co2'] or 0,
                 'total_water_saved': eco_stats['total_water'] or 0,
                 'total_waste_reduced': eco_stats['total_waste'] or 0,
+                'notifications': notifications,
+                'user_products': user_products,
             })
+
         except UserProfile.DoesNotExist:
-            # Create profile if it doesn't exist
             profile = UserProfile.objects.create(user=request.user)
             context['username'] = request.user.username
-    
+
+    # ✅ Handle contact form submission
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+
+        if name and email and message:
+            ContactMessage.objects.create(name=name, email=email, message=message)
+            messages.success(request, "Your message has been sent successfully!")
+            return redirect('home')  # Or replace with your actual URL name
+
+        else:
+            messages.error(request, "All fields are required.")
+
     return render(request, 'accounts/home.html', context)
 
 @login_required
@@ -431,25 +490,110 @@ def recycle_worker_list(request):
     return render(request, 'accounts/recycle_worker_list.html', {'workers': workers})
 
 
+# ========== ADMIN RECYCLE WORKER VIEWS ==========
 @staff_member_required
-def admin_assign_worker_list(request):
-    products = Product.objects.filter(recycle_worker__isnull=True)
-    return render(request, 'accounts/assign_worker_list.html', {'products': products})
+def assign_worker_list_view(request):
+    """List products (recycling or donation) that need recycle workers assigned"""
+    products = Product.objects.filter(
+        status__in=['recycling', 'for_donation'],  # Match both statuses
+        recycle_worker__isnull=True
+    ).select_related('category', 'user')
+    
+    return render(request, 'admin/assign_worker_list.html', {
+        'products': products
+    })
+
+
+
 
 @staff_member_required
 def assign_recycle_worker(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    workers = RecycleWorker.objects.filter(available=True)
+    workers = RecycleWorker.objects.all()  # Show all workers regardless of availability
 
     if request.method == 'POST':
         worker_id = request.POST.get('worker_id')
-        if worker_id:
+        pickup_time_str = request.POST.get('pickup_time')
+
+        if worker_id and pickup_time_str:
             worker = get_object_or_404(RecycleWorker, id=worker_id)
+            pickup_time = datetime.strptime(pickup_time_str, '%Y-%m-%dT%H:%M')
+
+            # Assign the worker to the product
             product.recycle_worker = worker
+            product.recycle_status = 'assigned'
+            product.pickup_time = pickup_time
             product.save()
+
+            # Create a notification
+            Notification.objects.create(
+                user=product.user,
+                message=f"A recycle worker has been assigned to collect your product: {product.name}. Pickup is scheduled at {pickup_time.strftime('%Y-%m-%d %H:%M')}.",
+                is_read=False
+            )
+
             return redirect('admin_assign_worker_list')
 
     return render(request, 'accounts/assign_worker_form.html', {
         'product': product,
         'workers': workers
     })
+
+
+@login_required
+def recycle_worker_dashboard(request):
+    try:
+        # Ensure the logged-in user is a recycle worker
+        worker = request.user.recycleworker
+    except RecycleWorker.DoesNotExist:
+        return HttpResponseForbidden("You are not authorized to view this page.")
+
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        product = get_object_or_404(Product, id=product_id, recycle_worker=worker)
+
+        if product.recycle_status != 'picked_up':
+            product.recycle_status = 'picked_up'  # Use recycle_status here
+            product.save()
+
+        return redirect('recycle_worker_dashboard')  # Prevent form resubmission
+
+    assigned_products = Product.objects.filter(recycle_worker=worker)
+    return render(request, 'accounts/recycle_worker_dashboard.html', {
+        'assigned_products': assigned_products
+    })
+
+def recycle_worker_logout(request):
+    logout(request)
+    return redirect('recycle_worker_login')
+
+
+def recycle_worker_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            try:
+                # Check if this user is a registered RecycleWorker
+                RecycleWorker.objects.get(user=user)
+                login(request, user)
+                return redirect('recycle_worker_dashboard')
+            except RecycleWorker.DoesNotExist:
+                return render(request, 'accounts/recycle_worker_login.html', {'error': 'You are not registered as a Recycle Worker.'})
+        else:
+            return render(request, 'accounts/recycle_worker_login.html', {'error': 'Invalid credentials.'})
+
+    return render(request, 'accounts/recycle_worker_login.html')
+
+
+def admin_worker_dashboard(request):
+    workers = RecycleWorker.objects.annotate(
+        assigned_count=Count('products', filter=Q(products__recycle_status='assigned')),
+        collected_count=Count('products', filter=Q(products__recycle_status='picked_up')),
+        pending_count=Count('products', filter=Q(products__recycle_status='pending'))
+    )
+    return render(request, 'admin/worker_dashboard.html', {'workers': workers})
+
+

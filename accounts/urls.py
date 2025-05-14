@@ -1,5 +1,8 @@
 from django.urls import path
 from . import views
+from .views import assign_worker_list_view
+from django.contrib.auth import views as auth_views
+
 
 urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
@@ -14,6 +17,7 @@ urlpatterns = [
     path('home/', views.home_view, name='home'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('my-products/', views.my_products_view, name='my_products'),
+
     
     # Add the URL for the user's product list
     path('product/<int:product_id>/', views.product_detail_view, name='product_detail'),
@@ -23,6 +27,17 @@ urlpatterns = [
      path('user_dashboard/', views.user_dashboard, name='user_dashboard'),
 
     path('recycle-workers/', views.recycle_worker_list, name='recycle_worker_list'),
-     path('assign-worker-list/', views.admin_assign_worker_list, name='admin_assign_worker_list'),
+    path('admin/assign-worker/', assign_worker_list_view, name='admin_assign_worker_list'),
     path('assign-worker/<int:product_id>/', views.assign_recycle_worker, name='assign_recycle_worker'),
+    path('recycle-worker/dashboard/', views.recycle_worker_dashboard, name='recycle_worker_dashboard'),
+    path('recycle-worker/login/', views.recycle_worker_login, name='recycle_worker_login'),
+    path('admin/worker-dashboard/', views.admin_worker_dashboard, name='admin_worker_dashboard'),
+    path('recycle-worker/logout/', views.recycle_worker_logout, name='recycle_worker_logout'),
+
+
+  path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+
 ]

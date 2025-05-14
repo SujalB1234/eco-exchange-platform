@@ -1,5 +1,6 @@
 from django import forms
 from .models import Product, Category, RecyclableItem, RecycleWorker
+from .models import ContactMessage
 
 class ProductForm(forms.ModelForm):
     category = forms.ModelChoiceField(
@@ -54,3 +55,9 @@ class AssignRecycleWorkerForm(forms.Form):
         label="Select Recycle Worker",
         widget=forms.Select(attrs={'class': 'form-control'})
     )
+
+
+class ContactForm(forms.ModelForm):
+    class Meta:
+        model = ContactMessage
+        fields = ['name', 'email', 'message']

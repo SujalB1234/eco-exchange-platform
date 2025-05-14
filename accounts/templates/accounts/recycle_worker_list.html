@@ -1,26 +1,168 @@
-{% extends 'accounts/base.html' %}
-{% block content %}
-  <h2>Recycle Workers</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Area</th>
-        <th>Contact</th>
-        <th>Specialization</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for worker in workers %}
-        <tr>
-          <td>{{ worker.name }}</td>
-          <td>{{ worker.area }}</td>
-          <td>{{ worker.contact }}</td>
-          <td>{{ worker.specialization }}</td>
-          <td>{% if worker.available %}✅ Available{% else %}❌ Unavailable{% endif %}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recycle Workers | Recycling System</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --gray: #95a5a6;
+            --white: #ffffff;
+            --border: #e0e0e0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--white);
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        nav a {
+            margin-left: 20px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            color: var(--primary);
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background-color: var(--white);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+        }
+        
+        .status-available {
+            color: var(--secondary);
+            font-weight: 500;
+        }
+        
+        .status-unavailable {
+            color: #e74c3c;
+            font-weight: 500;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 14px;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="{% url 'home' %}" class="logo">Recycling System</a>
+            <nav>
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'profile' %}">Account</a>
+            </nav>
+        </div>
+    </header>
+    
+    <div class="container">
+        <h1>Recycle Workers</h1>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Area</th>
+                    <th>Contact</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Rakesh</td>
+                    <td>Lalitpur</td>
+                    <td>9803768808</td>
+                    <td class="status-available">Available</td>
+                </tr>
+                <tr>
+                    <td>Yacn</td>
+                    <td>Lalitpur</td>
+                    <td>9840237093</td>
+                    <td class="status-available">Available</td>
+                </tr>
+                <tr>
+                    <td>Jack</td>
+                    <td>Lalitpur</td>
+                    <td>9840237093</td>
+                    <td class="status-unavailable">Unavailable</td>
+                </tr>
+                <tr>
+                    <td>iphone</td>
+                    <td>Lalitpur</td>
+                    <td>9840237093</td>
+                    <td class="status-available">Available</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <footer>
+        &copy; 2025 Recycling System. All rights reserved.
+    </footer>
+</body>
+</html>

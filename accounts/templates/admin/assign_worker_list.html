@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unassigned Products | Recycling System</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --gray: #95a5a6;
+            --white: #ffffff;
+            --border: #e0e0e0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--white);
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        nav a {
+            margin-left: 20px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            color: var(--primary);
+        }
+        
+        .page-header {
+            margin-bottom: 25px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+        
+        .page-description {
+            color: var(--gray);
+            font-size: 15px;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .product-card {
+            background: var(--white);
+            border-radius: 6px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            transition: box-shadow 0.2s ease;
+        }
+        
+        .product-card:hover {
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .product-name {
+            font-weight: 600;
+            font-size: 17px;
+            margin-bottom: 8px;
+        }
+        
+        .product-meta {
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .assign-btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .assign-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            background: var(--white);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+        
+        .empty-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .empty-text {
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 14px;
+            border-top: 1px solid var(--border);
+        }
+        
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            nav {
+                margin-top: 15px;
+            }
+            
+            nav a {
+                margin-left: 0;
+                margin-right: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="{% url 'admin_worker_dashboard' %}" class="logo">Recycling System</a>
+            <nav>
+                <a href="{% url 'admin_worker_dashboard' %}">Dashboard</a>
+                <a href="{% url 'product_listing' %}">Products</a>
+                <a href="{% url 'recycle_worker_list' %}">Workers</a>
+            </nav>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Unassigned Products</h1>
+            <p class="page-description">Products waiting to be assigned to recycling workers</p>
+        </div>
+        
+        {% if products %}
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <h3 class="product-name">{{ product.name }}</h3>
+                <div class="product-meta">
+                    <div>Current owner: {{ product.user.username }}</div>
+                    <div>Added: June 15, 2023</div>
+                </div>
+                <a href="{% url 'assign_recycle_worker' product.id %}" class="assign-btn">Assign Worker</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <h3 class="empty-title">No unassigned products</h3>
+            <p class="empty-text">All products are currently assigned to workers.</p>
+            <a href="#" class="assign-btn">Refresh List</a>
+        </div>
+        {% endif %}
+    </div>
+    
+    <footer>
+        &copy; 2023 Recycling System. All rights reserved.
+    </footer>
+</body>
+</html>

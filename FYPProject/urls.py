@@ -5,8 +5,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls')),  # Include accounts URLs
-    # Other app URLs can go here
+    path('accounts/', include('accounts.urls')),  # Your custom accounts app
 ]
 
 # Serving media files in development

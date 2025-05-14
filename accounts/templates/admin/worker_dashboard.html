@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Recycle Worker Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .dashboard-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 14px 20px;
+    }
+
+    th {
+      background-color: #007bff;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #e1f0ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <h2>Recycle Worker Dashboard</h2>
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Area</th>
+        <th>Assigned</th>
+        <th>Collected</th>
+        <th>Pending</th>
+      </tr>
+      {% for worker in workers %}
+        <tr>
+          <td>{{ worker.name }}</td>
+          <td>{{ worker.area }}</td>
+          <td>{{ worker.assigned_count }}</td>
+          <td>{{ worker.collected_count }}</td>
+          <td>{{ worker.pending_count }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</body>
+</html>

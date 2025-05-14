@@ -156,6 +156,60 @@
             font-weight: bold;
         }
 
+        /* Notification Panel Styles */
+        .notification-panel {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 350px;
+            max-height: 500px;
+            overflow-y: auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            z-index: 1000;
+            padding: 20px;
+            transform: translateY(-20px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .notification-panel.show {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .notification-panel h3 {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--light-gray);
+            padding-bottom: 10px;
+        }
+        
+        /* Alert Styles */
+        .alert {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .alert-info {
+            background-color: rgba(33, 150, 243, 0.1);
+            border-left: 4px solid #2196F3;
+            color: #0d47a1;
+        }
+        
+        .alert-success {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid #4CAF50;
+            color: #1B5E20;
+        }
+
         /* Hero Section */
         .hero {
             min-height: 90vh;
@@ -605,13 +659,33 @@
                 right: auto;
                 width: 100%;
             }
+            .notification-panel {
+                width: 300px;
+                right: 10px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Notification Panel -->
+    <div class="notification-panel">
+        {% for product in user_products %}
+          {% if product.recycle_status == 'assigned' %}
+            <div class="alert alert-info">
+              🚚 Your item <strong>"{{ product.name }}"</strong> has been assigned to a recycle worker.<br>
+              🕒 Estimated Pickup: {{ product.pickup_time|date:"F j, Y, g:i a" }}
+            </div>
+          {% elif product.recycle_status == 'picked_up' %}
+            <div class="alert alert-success">
+              ✅ Your item <strong>"{{ product.name }}"</strong> has been successfully picked up!
+            </div>
+          {% endif %}
+        {% endfor %}
+    </div>
+
     <!-- Navigation -->
     <nav class="navbar">
-        <a href="/" class="logo">Eco<span>Exchange</span></a>
+        <a href="{% url 'home' %}" class="logo">Eco<span>Exchange</span></a>
         <div>
             <a href="#about">About</a>
             <a href="#features">Features</a>
@@ -620,7 +694,7 @@
         </div>
         <div class="nav-buttons" id="auth-buttons">
             {% if request.user.is_authenticated %}
-                <a href="/notifications" class="notification-btn">
+                <a href="#" class="notification-btn">
                     <i class="fas fa-bell"></i>
                     <span class="notification-badge">3</span>
                 </a>
@@ -633,15 +707,15 @@
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="dropdown-menu">
-                        <a href="/profile"><i class="fas fa-user"></i> My Profile</a>
-                        <a href="/products"><i class="fas fa-list"></i> Product List</a>
-                        <a href="/eco-tracking"><i class="fas fa-leaf"></i> Eco Tracking</a>
-                        <a href="/accounts/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        <a href="{% url 'profile' %}"><i class="fas fa-user"></i> My Profile</a>
+                        <a href="{% url 'my_products' %}"><i class="fas fa-list"></i> Product List</a>
+                        <a href="{% url 'user_dashboard' %}"><i class="fas fa-leaf"></i> Eco Tracking</a>
+                        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>
                 </div>
             {% else %}
-                <a href="/accounts/login/" class="nav-button login-btn">Login</a>
-                <a href="/accounts/signup/" class="nav-button signup-btn">Sign Up</a>
+                <a href="{% url 'login' %}" class="nav-button login-btn">Login</a>
+                <a href="{% url 'signup' %}" class="nav-button signup-btn">Sign Up</a>
             {% endif %}
         </div>
     </nav>
@@ -654,16 +728,16 @@
                 <h1>Ready to Exchange More?</h1>
                 <p>You've shared {{ items_shared }} items with our community. Keep building the circular economy!</p>
                 <div class="cta-buttons">
-                    <a href="/products/add/" class="cta-button primary-btn">List an Item</a>
-                    <a href="/products/" class="cta-button secondary-btn">Browse Products</a>
+                    <a href="{% url 'add_product' %}" class="cta-button primary-btn">List an Item</a>
+                    <a href="{% url 'product_listing' %}" class="cta-button secondary-btn">Browse Products</a>
                 </div>
             {% else %}
                 <h2>Welcome, Guest!</h2>
                 <h1>Exchange More, Waste Less</h1>
                 <p>Join our sustainable community to trade and share goods. Together we can build a circular economy.</p>
                 <div class="cta-buttons">
-                    <a href="/accounts/signup/" class="cta-button primary-btn">Get Started</a>
-                    <a href="/products/" class="cta-button secondary-btn">Browse Products</a>
+                    <a href="{% url 'signup' %}" class="cta-button primary-btn">Get Started</a>
+                    <a href="{% url 'product_listing' %}" class="cta-button secondary-btn">Browse Products</a>
                 </div>
             {% endif %}
         </div>
@@ -752,7 +826,7 @@
                 <div class="feature-icon">
                     <i class="fas fa-gift"></i>
                 </div>
-                <h3>Donation Items</h3>
+                <h3>Donation & Recycling Items</h3>
                 <p>Give or receive items for free to support sustainability and community.</p>
             </a>
         </div>
@@ -773,8 +847,8 @@
                 <div class="testimonial-author" style="display: flex; align-items: center;">
                     <div class="author-avatar" style="width: 50px; height: 50px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; font-weight: bold;">JD</div>
                     <div>
-                        <h4 style="color: var(--primary-dark); margin-bottom: 5px;">Jane Doe</h4>
-                        <p style="color: var(--gray); font-size: 0.9rem;">Community Member since 2022</p>
+                        <h4 style="color: var(--primary-dark); margin-bottom: 5px;">Saksham Shakya</h4>
+                        <p style="color: var(--gray); font-size: 0.9rem;">Community Member since 2024</p>
                     </div>
                 </div>
             </div>
@@ -786,7 +860,7 @@
                 <div class="testimonial-author" style="display: flex; align-items: center;">
                     <div class="author-avatar" style="width: 50px; height: 50px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; font-weight: bold;">JS</div>
                     <div>
-                        <h4 style="color: var(--primary-dark); margin-bottom: 5px;">John Smith</h4>
+                        <h4 style="color: var(--primary-dark); margin-bottom: 5px;">Prajana</h4>
                         <p style="color: var(--gray); font-size: 0.9rem;">Community Member since 2023</p>
                     </div>
                 </div>
@@ -796,50 +870,58 @@
 
     <!-- Contact Section -->
     <section id="contact" class="contact" style="padding: 100px 5%; background: var(--light);">
-        <div class="section-header">
-            <h2 class="section-title">Get In Touch</h2>
-            <p class="section-subtitle">We'd love to hear from you</p>
-        </div>
-        
-        <div class="contact-content" style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
-            <div class="contact-info">
-                <div class="info-item" style="display: flex; align-items: flex-start; margin-bottom: 25px;">
-                    <div class="info-icon" style="background: var(--primary); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
-                        <i class="fas fa-envelope"></i>
-                    </div>
-                    <div>
-                        <h4 style="color: var(--primary-dark); margin-bottom: 5px;">Email Us</h4>
-                        <p style="color: var(--gray);">hello@ecoexchange.com</p>
-                    </div>
+    <div class="section-header">
+        <h2 class="section-title">Get In Touch</h2>
+        <p class="section-subtitle">We'd love to hear from you</p>
+    </div>
+
+    <div class="contact-content" style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+        <div class="contact-info">
+            <div class="info-item" style="display: flex; align-items: flex-start; margin-bottom: 25px;">
+                <div class="info-icon" style="background: var(--primary); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
+                    <i class="fas fa-envelope"></i>
                 </div>
-                
-                <div class="info-item" style="display: flex; align-items: flex-start; margin-bottom: 25px;">
-                    <div class="info-icon" style="background: var(--primary); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <div>
-                        <h4 style="color: var(--primary-dark); margin-bottom: 5px;">Visit Us</h4>
-                        <p style="color: var(--gray);">123 Green Street, Eco City</p>
-                    </div>
+                <div>
+                    <h4 style="color: var(--primary-dark); margin-bottom: 5px;">Email Us</h4>
+                    <p style="color: var(--gray);">eco.exchange@gmail.com</p>
                 </div>
             </div>
-            
-            <div class="contact-form" style="background: var(--white); padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
-                <form>
-                    <div style="margin-bottom: 20px;">
-                        <input type="text" placeholder="Your Name" style="width: 100%; padding: 12px 15px; border: 1px solid var(--light-gray); border-radius: 8px; font-family: inherit; font-size: 1rem;">
-                    </div>
-                    <div style="margin-bottom: 20px;">
-                        <input type="email" placeholder="Your Email" style="width: 100%; padding: 12px 15px; border: 1px solid var(--light-gray); border-radius: 8px; font-family: inherit; font-size: 1rem;">
-                    </div>
-                    <div style="margin-bottom: 20px;">
-                        <textarea placeholder="Your Message" rows="5" style="width: 100%; padding: 12px 15px; border: 1px solid var(--light-gray); border-radius: 8px; font-family: inherit; font-size: 1rem;"></textarea>
-                    </div>
-                    <button type="submit" style="background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 30px; font-weight: 600; cursor: pointer; transition: all 0.3s;">Send Message</button>
-                </form>
+
+            <div class="info-item" style="display: flex; align-items: flex-start; margin-bottom: 25px;">
+                <div class="info-icon" style="background: var(--primary); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div>
+                    <h4 style="color: var(--primary-dark); margin-bottom: 5px;">Visit Us</h4>
+                    <p style="color: var(--gray);">Kathmandu, Nepal</p>
+                </div>
             </div>
         </div>
-    </section>
+
+        <div class="contact-form" style="background: var(--white); padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+            {% if messages %}
+                {% for message in messages %}
+                    <p style="color: green;">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" action="{% url 'home' %}">
+                {% csrf_token %}
+                <div style="margin-bottom: 20px;">
+                    <input type="text" name="name" placeholder="Your Name" style="width: 100%; padding: 12px 15px; border: 1px solid var(--light-gray); border-radius: 8px; font-family: inherit; font-size: 1rem;" required>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <input type="email" name="email" placeholder="Your Email" style="width: 100%; padding: 12px 15px; border: 1px solid var(--light-gray); border-radius: 8px; font-family: inherit; font-size: 1rem;" required>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <textarea name="message" placeholder="Your Message" rows="5" style="width: 100%; padding: 12px 15px; border: 1px solid var(--light-gray); border-radius: 8px; font-family: inherit; font-size: 1rem;" required></textarea>
+                </div>
+                <button type="submit" style="background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 30px; font-weight: 600; cursor: pointer; transition: all 0.3s;">Send Message</button>
+            </form>
+        </div>
+    </div>
+</section>
+
 
     <!-- Footer -->
     <footer style="background: var(--primary-dark); color: white; padding: 50px 5%; text-align: center;">
@@ -849,10 +931,10 @@
                     Eco<span style="color: var(--secondary);">Exchange</span>
                 </div>
                 <div class="footer-links" style="display: flex; gap: 20px; margin-bottom: 20px;">
-                    <a href="#" style="color: white; text-decoration: none; transition: all 0.3s;">About</a>
-                    <a href="#" style="color: white; text-decoration: none; transition: all 0.3s;">Features</a>
-                    <a href="#" style="color: white; text-decoration: none; transition: all 0.3s;">Testimonials</a>
-                    <a href="#" style="color: white; text-decoration: none; transition: all 0.3s;">Contact</a>
+                    <a href="#about" style="color: white; text-decoration: none; transition: all 0.3s;">About</a>
+                    <a href="#features" style="color: white; text-decoration: none; transition: all 0.3s;">Features</a>
+                    <a href="#testimonials" style="color: white; text-decoration: none; transition: all 0.3s;">Testimonials</a>
+                    <a href="#contact" style="color: white; text-decoration: none; transition: all 0.3s;">Contact</a>
                 </div>
                 <div class="social-links" style="display: flex; gap: 15px; margin-bottom: 20px;">
                     <a href="#" style="color: white; font-size: 1.2rem; transition: all 0.3s;"><i class="fab fa-facebook"></i></a>
@@ -869,6 +951,20 @@
     <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Notification panel toggle functionality
+            document.querySelector('.notification-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                document.querySelector('.notification-panel').classList.toggle('show');
+            });
+            
+            // Close notification panel when clicking elsewhere
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.notification-panel') && !e.target.closest('.notification-btn')) {
+                    document.querySelector('.notification-panel').classList.remove('show');
+                }
+            });
+            
             // Dropdown functionality
             const dropdowns = document.querySelectorAll('.user-dropdown');
             dropdowns.forEach(dropdown => {
